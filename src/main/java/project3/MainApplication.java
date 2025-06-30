@@ -49,7 +49,20 @@ public class MainApplication extends JFrame{
         contentPane = (JPanel) getContentPane();
         contentPane.setBackground(new Color(20, 16, 24));
         contentPane.setLayout(null); // null = Absolute position
+        
+        constructMainMenu(contentPane);
 
+        setVisible(true);
+    }
+
+    public JPanel getMainMenu() {
+        contentPane.revalidate();
+        contentPane.repaint();
+        setTitle("A random ball bouncing game");
+        return constructMainMenu(contentPane);
+    }
+
+    public JPanel constructMainMenu(JPanel contentPane) {
         // Logo
         JLabel logoLabel = constructLogo();
         logoLabel.setBounds(140, -50, 500, 500);
@@ -70,7 +83,7 @@ public class MainApplication extends JFrame{
         diffSelect.setBounds(210, 300, 80, 30);
         contentPane.add(diffSelect);
 
-        setVisible(true);
+        return contentPane;
     }
 
     public JLabel constructLogo() {
@@ -265,15 +278,26 @@ public class MainApplication extends JFrame{
         return panel;
     }
 
-    //  To-do: Fix option button can't click after start button being click
     public JButton constructStartBtn() {
         JButton startButton = new JButton("Start");
         startButton.addActionListener(new ActionListener() {
-             public void actionPerformed(ActionEvent ev) {
+            public void actionPerformed(ActionEvent ev) {
                 if (startButton.isEnabled()) {
-                    JOptionPane.showInputDialog(null, "How many level do you want to play", "Level selector", JOptionPane.INFORMATION_MESSAGE);
+                    String input = JOptionPane.showInputDialog(null, "How many level do you want to play", "Level selector", JOptionPane.INFORMATION_MESSAGE);
+                    while (true) {
+                        try {
+                            difficultyLevel = Integer.parseInt(input);
+                            break;
+                        } catch (Exception e) {
+                            input = JOptionPane.showInputDialog(null, "Invalid Input\nHow many level do you want to play", "Level selector", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+                    contentPane.removeAll();
+                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, currentFrame));
+                    contentPane.revalidate();
+                    contentPane.repaint();
                 }
-             }
+             } 
         });
         return startButton;
     }
@@ -307,6 +331,4 @@ public class MainApplication extends JFrame{
         });
         return diffSelect;
     }
-
-
 }
