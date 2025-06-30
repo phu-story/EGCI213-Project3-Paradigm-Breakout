@@ -38,6 +38,7 @@ public class MainApplication extends JFrame{
     private static int volumeLevel = 0;
     private static int difficultyLevel = 0;
 
+    // Create frame
     public MainApplication() {
         setTitle("A random ball bouncing game");
         setSize(800, 600);
@@ -45,23 +46,44 @@ public class MainApplication extends JFrame{
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
+        // For dev phase, ESC to quick exit program, Enter to quick start
+        setFocusable(true);
+        requestFocusInWindow();
+        addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                System.err.println();
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    System.exit(0);
+                } else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    contentPane.removeAll();
+                    contentPane.add(gameRender.renderPlayable(0, 1, currentFrame));
+                    
+                    contentPane.revalidate();
+                    contentPane.repaint();
+                }
+            }
+        });
+
         currentFrame = this;
         contentPane = (JPanel) getContentPane();
         contentPane.setBackground(new Color(20, 16, 24));
         contentPane.setLayout(null); // null = Absolute position
         
+        // Method to add all main menu components
         constructMainMenu(contentPane);
 
         setVisible(true);
     }
 
+    // Using in gameRender to come back to main menu
     public JPanel getMainMenu() {
         contentPane.revalidate();
         contentPane.repaint();
         setTitle("A random ball bouncing game");
         return constructMainMenu(contentPane);
-    }
+    } // End of getMainMenu
 
+    // Root
     public JPanel constructMainMenu(JPanel contentPane) {
         // Logo
         JLabel logoLabel = constructLogo();
@@ -84,16 +106,82 @@ public class MainApplication extends JFrame{
         contentPane.add(diffSelect);
 
         return contentPane;
-    }
+    } // End of constructMainMenu
 
+    // Helper method to add logo, subset of main menu
     public JLabel constructLogo() {
         ImageIcon imageIcon = new ImageIcon(FILE_LOGO);
         Image scaledImage = imageIcon.getImage().getScaledInstance(500, 500, java.awt.Image.SCALE_DEFAULT);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
         JLabel logoLabel = new JLabel(scaledIcon);
         return logoLabel;
-    }
+    } // End of constructLogo
 
+        // Helper method to add start button, subset of main menu
+    public JButton constructStartBtn() {
+        JButton startButton = new JButton("Start");
+        startButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ev) {
+                if (startButton.isEnabled()) {
+
+                    // Inquire user by pop-up box
+                    String input = JOptionPane.showInputDialog(null, "How many level do you want to play", "Level selector", JOptionPane.INFORMATION_MESSAGE);
+                    while (true) {
+                        try {
+                            // Try interpret to int
+                            difficultyLevel = Integer.parseInt(input);
+                            break;
+                        } catch (Exception e) {
+                            input = JOptionPane.showInputDialog(null, "Invalid Input\nHow many level do you want to play", "Level selector", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+
+                    // Remove main menu Ui & Render gameplay
+                    contentPane.removeAll();
+                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, currentFrame));
+                    
+                    contentPane.revalidate();
+                    contentPane.repaint();
+                }
+             } 
+        });
+        return startButton;
+    } // End of constructStartBtn
+
+    // Helper method to add difficulty selector button, subset of main menu
+    public JComboBox<String> constructDiffiBtn() {
+        String[] difficulty = {"Endless", "Easy", "Medium", "Hard", "Random"};
+        JComboBox<String> diffSelect = new JComboBox<String>(difficulty);
+        
+        // Set sefault difficulty to easy
+        diffSelect.setSelectedIndex(1);
+        diffSelect.addActionListener(new ActionListener() {
+               public void actionPerformed(ActionEvent ev) {
+                 switch(diffSelect.getSelectedIndex()) {
+                    case 0:     // Endless
+                        difficultyLevel = 0;
+                       break;    
+                    case 1:     // Easy
+                        difficultyLevel = 1;
+                       break;
+                    case 2:     // Medium
+                        difficultyLevel = 2;
+                       break;
+                    case 3:     // Hard
+                        difficultyLevel = 3;
+                       break;
+                    case 4:     // Random
+                        difficultyLevel = (int) (Math.random() * 3);
+                       break;
+                    default:
+                       break;
+                 }
+               }
+        });
+        return diffSelect;
+    } // End of constructDiffiBtn
+
+    // Helper method to add settings button, subset of main menu
     public JButton constructSettingsBtn() {
         JButton settingsButton = new JButton("Settings");
         settingsButton.addActionListener(new ActionListener() {
@@ -151,8 +239,13 @@ public class MainApplication extends JFrame{
             }
         });
         return settingsButton;
-    }
+    } // End of constructSettingsBtn
 
+    // *************************************************************************************
+    // From here, the rest going to be helper method to support JList within settings button
+    // *************************************************************************************
+
+    // Helper method to handle JList in option pane, subset of settings
     public JPanel howToPlayPanel() {
         String message = "Use your mouse to glide the slider around \nPress ESC to return to main menu";
         JTextArea textArea = new JTextArea(message);
@@ -162,8 +255,9 @@ public class MainApplication extends JFrame{
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(textArea);
         return panel;
-    }
+    } // End of howToPlayPanel
 
+    // Helper method to handle JList in option pane, subset of settings
     public JPanel gameplayPanel() {
         String message = "I want to kill myself";
         JTextArea textArea = new JTextArea(message);
@@ -173,8 +267,9 @@ public class MainApplication extends JFrame{
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(textArea);
         return panel;
-    }
+    } // End of gameplayPanel
 
+    // Helper method to handle JList in option pane, subset of settings
     public JPanel soundPanel() {
         String message = "Sound volume";
         JTextArea textArea = new JTextArea(message);
@@ -216,8 +311,9 @@ public class MainApplication extends JFrame{
         panel.add(radioPanel, BorderLayout.CENTER);
 
         return panel;
-    }
+    } // End of soundPanel
 
+    // Helper method to handle JList in option pane, subset of settings
     public JPanel selectBGPanel() {
         String message = "Why did I even chose STEM";
         JTextArea textArea = new JTextArea(message);
@@ -260,8 +356,9 @@ public class MainApplication extends JFrame{
         panel.add(radioPanel, BorderLayout.CENTER);
 
         return panel;
-    }
+    } // End of selectBGPanel
 
+    // Helper method to handle JList in option pane, subset of settings
     public JPanel creditsPanel() {
         String message = "    Made with ♥ by these fellows, \n\n" + //
                         "    Veerapat Leepiboonsawat 6580969\n" + //
@@ -276,59 +373,5 @@ public class MainApplication extends JFrame{
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(textArea);
         return panel;
-    }
-
-    public JButton constructStartBtn() {
-        JButton startButton = new JButton("Start");
-        startButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ev) {
-                if (startButton.isEnabled()) {
-                    String input = JOptionPane.showInputDialog(null, "How many level do you want to play", "Level selector", JOptionPane.INFORMATION_MESSAGE);
-                    while (true) {
-                        try {
-                            difficultyLevel = Integer.parseInt(input);
-                            break;
-                        } catch (Exception e) {
-                            input = JOptionPane.showInputDialog(null, "Invalid Input\nHow many level do you want to play", "Level selector", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    }
-                    contentPane.removeAll();
-                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, currentFrame));
-                    contentPane.revalidate();
-                    contentPane.repaint();
-                }
-             } 
-        });
-        return startButton;
-    }
-
-    public JComboBox<String> constructDiffiBtn() {
-        String[] difficulty = {"Endless", "Easy", "Medium", "Hard", "Random"};
-        JComboBox<String> diffSelect = new JComboBox<String>(difficulty);
-        diffSelect.setSelectedIndex(1);
-        diffSelect.addActionListener(new ActionListener() {
-               public void actionPerformed(ActionEvent ev) {
-                 switch(diffSelect.getSelectedIndex()) {
-                    case 0:     // Endless
-                        difficultyLevel = 0;
-                       break;    
-                    case 1:     // Easy
-                        difficultyLevel = 1;
-                       break;
-                    case 2:     // Medium
-                        difficultyLevel = 2;
-                       break;
-                    case 3:     // Hard
-                        difficultyLevel = 3;
-                       break;
-                    case 4:     // Random
-                        difficultyLevel = (int) (Math.random() * 3);
-                       break;
-                    default:
-                       break;
-                 }
-               }
-        });
-        return diffSelect;
-    }
+    } // End of creditsPanel
 }
