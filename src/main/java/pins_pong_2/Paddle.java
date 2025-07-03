@@ -1,4 +1,4 @@
-package pins_pong;
+package pins_pong_2;
 
 import java.awt.*;
 
@@ -29,6 +29,7 @@ class Paddle
     public int getHeight() { return height; }
     public int getY() { return y; }
     public int getX() { return x; }
+    public int getCenterY() { return y + height/2; }
 
 
     public void paint(Graphics g)
@@ -55,7 +56,7 @@ class Paddle
 
         if(Math.abs(centerY - moveToY) > speed) //check whether the difference between moveTo
         {                                       //and point we want to go is not more than the distance
-            if(centerY >  moveToY)              //paddle usually travels
+            if(centerY >  moveToY )              //paddle usually travels
             {
                 y -= speed;
             }
