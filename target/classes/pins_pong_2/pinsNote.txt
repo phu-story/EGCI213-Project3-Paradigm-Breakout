@@ -13,13 +13,7 @@ minor gameplay improvement, such as, live system, 4 game modes as discussed with
 
 GAMEMODES
 
-- sweaty            | comically fast ball speed, make it as a joke, for pros only, 1 life only (usually 3)
-- atheletic         | smarter pc reaction, faster ball
-- basic pong,       | just a basic gamemode, is basically what you are witnessing, 
-    but with limited life function
-- daddy can I play? | basic pong gamemode with unlimited life, the source code is in front of you rn
-    dynamic speed IS DISABLED, bounce count cannot go up (you can disable it in code)
-- multiplayer,      | WASD key ENEBALED, dynamic ball speed is also enabled, for two players
+https://docs.google.com/spreadsheets/d/15gAMf6B0AgkNOBzurp3UK2MsG3nvsx8H0onVUfp4_-Y/edit?gid=0#gid=0
 
 additional UI improvement required, and also customization, although is not classic, but if have time
 would not kill if added
