@@ -130,6 +130,9 @@ public class MainApplication extends JFrame{
                         try {
                             // Try interpret to int
                             difficultyLevel = Integer.parseInt(input);
+                            if (difficultyLevel <= 0) {
+                                throw new Exception();
+                            }
                             break;
                         } catch (Exception e) {
                             input = JOptionPane.showInputDialog(null, "Invalid Input\nHow many level do you want to play", "Level selector", JOptionPane.INFORMATION_MESSAGE);
@@ -281,7 +284,7 @@ public class MainApplication extends JFrame{
         toggleButton[2] = new JRadioButton("50");  
         toggleButton[3] = new JRadioButton("75");  
         toggleButton[4] = new JRadioButton("100");  
-	    toggleButton[0].setSelected(true);
+	    toggleButton[volumeLevel/25].setSelected(true);
         btnGroup.add(toggleButton[0]);                                  
         btnGroup.add(toggleButton[1]);
         btnGroup.add(toggleButton[2]);
