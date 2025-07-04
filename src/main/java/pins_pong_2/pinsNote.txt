@@ -20,3 +20,9 @@ would not kill if added
 
 so far so good
 sorry for typo, it's 1 am now and Im starting to hallucinate
+
+Checklist for modes
+- dynamic ball
+- better AI
+- Force miss
+- comically fast ball speed
