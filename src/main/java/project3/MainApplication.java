@@ -21,10 +21,13 @@ package project3;
 */
 
 import java.awt.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 
 import java.awt.event.*;
+
+import project3.gameMech.SoundPlayer;
 
 public class MainApplication extends JFrame{
     public static void main(String[] args) {
@@ -53,7 +56,16 @@ public class MainApplication extends JFrame{
             public void keyPressed(KeyEvent e) {
                 System.err.println();
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    System.exit(0);
+                    //System.exit(0);
+                    int exit = JOptionPane.showConfirmDialog(MainApplication.this, "Exit the game and return to the Main Menu?", "Exit Game", JOptionPane.YES_NO_OPTION);
+                    if (exit == JOptionPane.YES_OPTION){
+                        contentPane.removeAll(); //clear
+                        SoundPlayer.stop();//stop backgroundsound
+                        contentPane.add(getMainMenu()); 
+                        contentPane.revalidate(); //refresh
+                        contentPane.repaint();
+                    }
+
                 } else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
                     contentPane.removeAll();
                     contentPane.add(gameRender.renderPlayable(0, 1, 1, currentFrame));
