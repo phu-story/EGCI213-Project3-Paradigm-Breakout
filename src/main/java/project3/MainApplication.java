@@ -36,7 +36,7 @@ public class MainApplication extends JFrame{
     private static final String PATH = "src/main/java/project3/";
     private static final String FILE_LOGO = PATH + "Logo.png";
     private static int volumeLevel = 0;
-    private static int difficultyLevel = 0;
+    private static int difficultyLevel = 1;
 
     // Create frame
     public MainApplication() {
@@ -124,18 +124,20 @@ public class MainApplication extends JFrame{
             public void actionPerformed(ActionEvent ev) {
                 if (startButton.isEnabled()) {
 
-                    // Inquire user by pop-up box
-                    String input = JOptionPane.showInputDialog(null, "How many level do you want to play", "Level selector", JOptionPane.INFORMATION_MESSAGE);
-                    while (true) {
-                        try {
-                            // Try interpret to int
-                            difficultyLevel = Integer.parseInt(input);
-                            if (difficultyLevel <= 0) {
-                                throw new Exception();
+                    // If difficulty isn't Endless
+                    if (difficultyLevel != 0) {
+                        // Inquire user by pop-up box
+                        String input = JOptionPane.showInputDialog(null, "How many points to win?", "Winning Score select", JOptionPane.INFORMATION_MESSAGE);
+                        while (true) {
+                            try {
+                                if (input == null) return;    // if user pressed cancelled
+                                // Try interpret to int
+                                difficultyLevel = Integer.parseInt(input);
+                                if (difficultyLevel <= 0) throw new Exception();
+                                break;
+                            } catch (Exception e) {
+                                input = JOptionPane.showInputDialog(null, "Invalid Input\nHow many points to win?", "Winning Score select", JOptionPane.INFORMATION_MESSAGE);
                             }
-                            break;
-                        } catch (Exception e) {
-                            input = JOptionPane.showInputDialog(null, "Invalid Input\nHow many level do you want to play", "Level selector", JOptionPane.INFORMATION_MESSAGE);
                         }
                     }
 
