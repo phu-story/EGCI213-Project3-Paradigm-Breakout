@@ -52,7 +52,6 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
     {
         // Adjust difficulty level by user's config
         if (difficultyLevel > 1) {
-            System.out.println(difficultyLevel);
             cx = 4 + difficultyLevel;
             cy = 4 + difficultyLevel;
             ballSpeed = 4 + difficultyLevel;
@@ -63,10 +62,10 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         gameBall = new Ball(300, 200 , cx ,cy , ballSpeed , ballColor, 10); //SPEED IS 3
         futureBall = new Ball(gameBall);
         userPaddle = new Paddle(10, WINDOW_HEIGHT/2, userPaddleHeight, userPaddleSpeed, userPaddleColor); //SPEED CAN CHANGE HERE, COLOR AS WELL
-        pcPaddle   = new Paddle(WINDOW_WIDTH - 40, WINDOW_HEIGHT/2, 
-                                pcPaddleHeight, 
-                                pcPaddleSpeed, 
-                                pcPaddleColor
+        pcPaddle   = new Paddle(WINDOW_WIDTH - 40, WINDOW_HEIGHT/2,     // x,y cord of starting position 
+                                pcPaddleHeight,                         // Paddle's height
+                                pcPaddleSpeed,                          // Moveable unit per frame
+                                pcPaddleColor                           // paddle color
                                 );
 
         userMouseY = 0;
@@ -157,7 +156,7 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         //pcPaddle.moveToward(gameBall.getY()); //EASIEST IMPLEMENTATION, PCPADDLE ALWAYS MOVES TOWARD THE BALL
         //We can make it harder though
         
-        if( Math.abs( ( pcPaddle.getY() + pcPaddle.getHeight()/2 ) - detectedCollideY) < 3 && !pcGotToTarget)
+        if( Math.abs( ( pcPaddle.getY() + pcPaddle.getHeight()/2 ) - detectedCollideY) < 1 && !pcGotToTarget) // Accuracy of paddle placement
         {
             pcGotToTarget = true;
             System.out.println("pc paddle got to designated target"); //for better ai movement
@@ -165,7 +164,9 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         }
         
         if(!pcGotToTarget){
-            pcPaddle.moveToward(detectedCollideY); //advance pc detection, for sees where the ball is going, HARDER GAME MODE
+            // This should fix PC's paddle fall out off screen [10, 500]
+            int yAxis_MoveLimit = Math.max(10, Math.min(WINDOW_HEIGHT - 10, detectedCollideY));
+            pcPaddle.moveToward(yAxis_MoveLimit); //advance pc detection, for sees where the ball is going, HARDER GAME MODE
         }
         else
         {
@@ -257,6 +258,7 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
     
     }
 
+    // Check if ball hit wall Score counting
     public void outXBound(Ball gameBall)
     {
         if(gameBall.getX() < 0) //condition checking whether lose or not
