@@ -36,7 +36,7 @@ public class MainApplication extends JFrame{
     private static final String PATH = "src/main/java/project3/";
     private static final String FILE_LOGO = PATH + "Logo.png";
     private static int volumeLevel = 0;
-    private static int difficultyLevel = 0;
+    private static int difficultyLevel = 1;
 
     // Create frame
     public MainApplication() {
@@ -56,7 +56,7 @@ public class MainApplication extends JFrame{
                     System.exit(0);
                 } else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
                     contentPane.removeAll();
-                    contentPane.add(gameRender.renderPlayable(0, 1, currentFrame));
+                    contentPane.add(gameRender.renderPlayable(0, 1, 1, currentFrame));
                     
                     contentPane.revalidate();
                     contentPane.repaint();
@@ -123,25 +123,27 @@ public class MainApplication extends JFrame{
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
                 if (startButton.isEnabled()) {
-
-                    // Inquire user by pop-up box
-                    String input = JOptionPane.showInputDialog(null, "How many level do you want to play", "Level selector", JOptionPane.INFORMATION_MESSAGE);
-                    while (true) {
-                        try {
-                            // Try interpret to int
-                            difficultyLevel = Integer.parseInt(input);
-                            if (difficultyLevel <= 0) {
-                                throw new Exception();
+                    int winPoint = 1;
+                    // If difficulty isn't Endless
+                    if (difficultyLevel != 0) {
+                        // Inquire user by pop-up box
+                        String input = JOptionPane.showInputDialog(null, "How many points to win?", "Winning Score select", JOptionPane.INFORMATION_MESSAGE);
+                        while (true) {
+                            try {
+                                if (input == null) return;    // if user pressed cancelled
+                                // Try interpret to int
+                                winPoint = Integer.parseInt(input);
+                                if (winPoint <= 0) throw new Exception();
+                                break;
+                            } catch (Exception e) {
+                                input = JOptionPane.showInputDialog(null, "Invalid Input\nHow many points to win?", "Winning Score select", JOptionPane.INFORMATION_MESSAGE);
                             }
-                            break;
-                        } catch (Exception e) {
-                            input = JOptionPane.showInputDialog(null, "Invalid Input\nHow many level do you want to play", "Level selector", JOptionPane.INFORMATION_MESSAGE);
                         }
                     }
 
                     // Remove main menu Ui & Render gameplay
                     contentPane.removeAll();
-                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, currentFrame));
+                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, winPoint, currentFrame));
                     
                     contentPane.revalidate();
                     contentPane.repaint();
@@ -187,11 +189,12 @@ public class MainApplication extends JFrame{
     // Helper method to add settings button, subset of main menu
     public JButton constructSettingsBtn() {
         JButton settingsButton = new JButton("Settings");
+        // settingsButton.setLocationRelativeTo(null);
         settingsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
                 JFrame settingsPanel = new JFrame("Settings");
                 settingsPanel.setSize(500, 300);
-                // settingsPanel.setLocationRelativeTo(null);
+                settingsPanel.setLocationRelativeTo(null);
                 settingsPanel.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
                 // Left: JList in a scroll pane
