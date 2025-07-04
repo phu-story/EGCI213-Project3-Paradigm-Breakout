@@ -9,8 +9,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class gameRender extends JFrame{
+    public static final int DELAY = 30;
 
-    public static JPanel renderPlayable(int volumeLevel, int difficultyLevel, MainApplication mainFrame) {
+    public static JPanel renderPlayable(int volumeLevel, int difficultyLevel, int winPoint, MainApplication mainFrame) {
         JPanel playArea = new JPanel(new BorderLayout());
         playArea.setSize(800, 600);
         mainFrame.setTitle("A random ball bouncing game");
@@ -40,12 +41,11 @@ public class gameRender extends JFrame{
         // textArea.setBounds(250, 350, 300, 100); // Set position and size
         // playArea.add(textArea);
 
-        PongGame game = new PongGame();
+        PongGame game = new PongGame(difficultyLevel, winPoint);
         playArea.add(game);
 
         playArea.setVisible(true);
         // playArea.setSize(650, 495);      // 
-        final int DELAY = 24;
         Timer timer = new Timer(DELAY, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

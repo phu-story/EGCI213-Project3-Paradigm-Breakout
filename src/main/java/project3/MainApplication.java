@@ -56,7 +56,7 @@ public class MainApplication extends JFrame{
                     System.exit(0);
                 } else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
                     contentPane.removeAll();
-                    contentPane.add(gameRender.renderPlayable(0, 1, currentFrame));
+                    contentPane.add(gameRender.renderPlayable(0, 1, 1, currentFrame));
                     
                     contentPane.revalidate();
                     contentPane.repaint();
@@ -123,7 +123,7 @@ public class MainApplication extends JFrame{
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
                 if (startButton.isEnabled()) {
-
+                    int winPoint = 1;
                     // If difficulty isn't Endless
                     if (difficultyLevel != 0) {
                         // Inquire user by pop-up box
@@ -132,7 +132,7 @@ public class MainApplication extends JFrame{
                             try {
                                 if (input == null) return;    // if user pressed cancelled
                                 // Try interpret to int
-                                difficultyLevel = Integer.parseInt(input);
+                                winPoint = Integer.parseInt(input);
                                 if (difficultyLevel <= 0) throw new Exception();
                                 break;
                             } catch (Exception e) {
@@ -143,7 +143,7 @@ public class MainApplication extends JFrame{
 
                     // Remove main menu Ui & Render gameplay
                     contentPane.removeAll();
-                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, currentFrame));
+                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, winPoint, currentFrame));
                     
                     contentPane.revalidate();
                     contentPane.repaint();

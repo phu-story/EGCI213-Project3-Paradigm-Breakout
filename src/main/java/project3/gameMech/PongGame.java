@@ -1,6 +1,9 @@
 package project3.gameMech;
 
 import javax.swing.*;
+
+import project3.gameRender;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -25,10 +28,10 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
      * in increaseSpeed() method, aside from that, it has no use, for now
      */
     
-    private final int cx=4, cy=4, ballSpeed=4; //to make it harder, increase all THREE variables
-    private final int userPaddleSpeed=3;
-    private final int pcPaddleSpeed=3;
-    private final int refreshRate = Main.DELAY; //want to change this? change main's delay
+    private int cx = 4, cy = 4, ballSpeed = 4; //to make it harder, increase all THREE variables
+    private int userPaddleSpeed=3;
+    private int pcPaddleSpeed=3;
+    private final int refreshRate = gameRender.DELAY; //want to change this? change main's delay
     private final Color pcPaddleColor=Color.RED, userPaddleColor=Color.BLUE, ballColor=Color.YELLOW;
     private boolean pcAccidentalMiss;
 
@@ -45,8 +48,18 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
     
     
 
-    public PongGame()
+    public PongGame(int difficultyLevel, int winPoint)
     {
+        // Adjust difficulty level by user's config
+        if (difficultyLevel > 1) {
+            System.out.println(difficultyLevel);
+            cx = 4 + difficultyLevel;
+            cy = 4 + difficultyLevel;
+            ballSpeed = 4 + difficultyLevel;
+            userPaddleSpeed = 3 + difficultyLevel;
+            pcPaddleSpeed = 3 + difficultyLevel;
+        }
+
         gameBall = new Ball(300, 200 , cx ,cy , ballSpeed , ballColor, 10); //SPEED IS 3
         futureBall = new Ball(gameBall);
         userPaddle = new Paddle(10, WINDOW_HEIGHT/2, userPaddleHeight, userPaddleSpeed, userPaddleColor); //SPEED CAN CHANGE HERE, COLOR AS WELL
@@ -65,6 +78,8 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         pcGotToTarget=false;
         oscillateTowards=0;
         pcAccidentalMiss=false;
+
+
 
         setFocusable(true);
         requestFocusInWindow();
