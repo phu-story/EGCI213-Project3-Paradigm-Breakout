@@ -1,8 +1,14 @@
 package pins_pong;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 
 class PongGame extends JPanel implements MouseMotionListener, KeyListener
@@ -66,6 +72,7 @@ class PongGame extends JPanel implements MouseMotionListener, KeyListener
     @Override
     public void paintComponent(Graphics g)
     {
+         
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         
@@ -77,7 +84,9 @@ class PongGame extends JPanel implements MouseMotionListener, KeyListener
         g.setColor(Color.WHITE); //SCORE BOARD CAN ALSO BE CUSTOMIZED HERE
         String scoreBoard = "Score - user [ " + userScore + " ] PC [ " + pcScore + " ]"; 
         g.drawString(scoreBoard, 250, 20);
-             
+        
+        
+        
     }
 
     public void gameLogic()

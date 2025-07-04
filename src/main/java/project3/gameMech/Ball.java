@@ -1,12 +1,17 @@
 package project3.gameMech;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
 
 class Ball
 {
     private int x, y, cx, cy, speed, size;
     private final Color color;
-    static final int MAX_SPEED = 7;
+    //static final int MAX_SPEED = 7;
+    static final int MAX_SPEED = 14;
     
     public Ball(int x, int y, int cx, int cy, int speed, Color color, int size) {
         this.x = x;
@@ -30,9 +35,13 @@ class Ball
     
     public void paint(Graphics g)
     {
-        g.setColor(color);
+        //g.setColor(color);
         
-        g.fillOval(x, y, size, size);
+        //g.fillOval(x, y, size, size);
+        
+        // set background
+        Image ballImage= new ImageIcon(PongGame.PATH + "ball.png").getImage();
+        g.drawImage(ballImage, x, y, 40, 30, null);
     }
 
     public void moveBall()

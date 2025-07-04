@@ -66,8 +66,21 @@ public class MainApplication extends JFrame{
 
         currentFrame = this;
         contentPane = (JPanel) getContentPane();
-        contentPane.setBackground(new Color(20, 16, 24));
-        contentPane.setLayout(null); // null = Absolute position
+        //contentPane.setBackground(new Color(20, 16, 24));
+        //set path for background
+        final String Path = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
+        // Set background panel
+        JPanel backgroundPanel = new JPanel() {
+            private Image background = new ImageIcon(Path + "background.png").getImage();
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(background, 0, 0, 800, 600, this);
+            }
+        };
+        backgroundPanel.setLayout(null); // null = Absolute position
+        setContentPane(backgroundPanel);
+        contentPane = (JPanel) getContentPane();
         
         // Method to add all main menu components
         constructMainMenu(contentPane);

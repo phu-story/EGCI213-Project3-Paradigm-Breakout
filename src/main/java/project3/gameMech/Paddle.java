@@ -1,6 +1,10 @@
 package project3.gameMech;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+//import java.awt.Image;
+
+//import javax.swing.ImageIcon;
 
 class Paddle
 {
@@ -36,6 +40,7 @@ class Paddle
     {
         g.setColor(color);
         g.fillRect(x, y, PADDLE_WIDTH, height);
+       
     }
     
     /**

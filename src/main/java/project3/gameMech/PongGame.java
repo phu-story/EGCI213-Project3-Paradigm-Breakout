@@ -1,11 +1,18 @@
 package project3.gameMech;
 
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import project3.gameRender;
-
-import java.awt.*;
-import java.awt.event.*;
 
 
 public class PongGame extends JPanel implements MouseMotionListener, KeyListener
@@ -45,11 +52,15 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
 
     private Timer paddleKeyTimer;
     private boolean upKeyPressed=false, downKeyPressed=false;
+
+    static final String PATH = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
     
     
 
     public PongGame(int difficultyLevel, int winPoint)
     {
+        //add sound background
+        SoundPlayer.playBackgroundSound(PATH + "backgroundsound.wav");
         // Adjust difficulty level by user's config
         if (difficultyLevel > 1) {
             System.out.println(difficultyLevel);
@@ -105,19 +116,48 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
     @Override
     public void paintComponent(Graphics g)
     {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         
+        super.paintComponent(g);
+        // set background
+        Image background = new ImageIcon(PATH + "background.png").getImage();
+        g.drawImage(background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
+       
+        
+        // game objects
         gameBall.paint(g);
-        //futureBall.paint(g); //supposed to be invisible, added paint to make dev sees if mechanic works or not
-        
         userPaddle.paint(g);
         pcPaddle.paint(g);
+        // label
+        String user = String.valueOf(userScore); // score
+        String pc = String.valueOf(pcScore);
+        int boxSize = 100+80+(20*user.toCharArray().length) + 10 + 70 + (20*pc.toCharArray().length); //calc header width
+        int x = (800-boxSize)/2, y = 20;
 
-        g.setColor(Color.WHITE); //SCORE BOARD CAN ALSO BE CUSTOMIZED HERE
-        String scoreBoard = "Score - user [ " + userScore + " ] PC [ " + pcScore + " ]"; 
-        g.drawString(scoreBoard, 300, 20);
-             
+        Image scoreLabel = new ImageIcon(PATH + "score.png").getImage();
+        g.drawImage(scoreLabel, x, y, 100, 60, this); 
+        x+=100; 
+
+        Image userLabel = new ImageIcon(PATH + "user.png").getImage();
+        g.drawImage(userLabel, x, y, 80, 60, this); 
+        x+=80; y+=5;
+
+        for (char num : user.toCharArray()) {
+            Image numImage = new ImageIcon(PATH + num + ".png").getImage();
+            g.drawImage(numImage, x, y, 40, 40, this); 
+            x+=20;
+        } 
+        x+=10; y-=5;
+
+        Image pcLabel = new ImageIcon(PATH + "PC.png").getImage();
+        g.drawImage(pcLabel, x, y, 80, 60, this); 
+        x+=70; y+=5;
+
+        // score
+        for (char num : pc.toCharArray()) {
+            Image numImage = new ImageIcon(PATH + num + ".png").getImage();
+            g.drawImage(numImage, x, y, 40, 40, this);
+            x+=20;
+        }  
     }
 
     public void gameLogic()
@@ -186,6 +226,8 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
             gameBall.reverseX();
             gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH + 1);
             bounceCount++;
+
+            SoundPlayer.playsound(PATH + "hitsound.wav");
         }
         
         if(pcPaddle.checkCollision(gameBall))
@@ -198,6 +240,8 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
             detectedCollideY = -1; 
             pcGotToTarget = false;                                  //TO THIS
             bounceCount ++;
+
+            SoundPlayer.playsound(PATH + "hitsound.wav");
 
             if((int)(Math.random() * 3) == 0)
             {
