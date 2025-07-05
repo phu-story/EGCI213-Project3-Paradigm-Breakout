@@ -30,6 +30,8 @@ public class gameRender extends JFrame {
         mainFrame.setTitle("A random ball bouncing game");
         playArea.setFocusable(true);
 
+        //set volume before game start
+        SoundPlayer.setVolume(volumeLevel);
         game = new PongGame(difficultyLevel, winPoint);
         playArea.add(game);
 

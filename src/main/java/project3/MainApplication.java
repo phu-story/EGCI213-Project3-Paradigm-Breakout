@@ -41,7 +41,7 @@ public class MainApplication extends JFrame {
     static final String PATH = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
     private static final String FILE_LOGO = PATH + "Logo.png";
     private static int volumeLevel = 50;
-    private static int difficultyLevel = 1;
+    private static int difficultyLevel, winPoint;
 
     // Create frame
     public MainApplication() {
@@ -70,7 +70,7 @@ public class MainApplication extends JFrame {
 
                 } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     contentPane.removeAll();
-                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, 1, currentFrame));
+                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, winPoint, currentFrame));
                     contentPane.revalidate();
                     contentPane.repaint();
                 }
@@ -97,8 +97,9 @@ public class MainApplication extends JFrame {
 
         // Method to add all main menu components
         constructMainMenu(contentPane);
-
         setVisible(true);
+
+        SoundPlayer.setVolume(volumeLevel);
     }
 
     // Using in gameRender to come back to main menu

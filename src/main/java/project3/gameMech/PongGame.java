@@ -59,10 +59,18 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
     private static String backgroundName = "BG1";
     private static int currvolumeLevel = 50;
 
+    //settings
+    private int difficultyLevel;
+    private int winPoint;
+
     public PongGame(int difficultyLevel, int winPoint) {
+
+        this.difficultyLevel = difficultyLevel;
+        this.winPoint = winPoint;
+
         SoundPlayer.stop();
         SoundPlayer.playBackgroundSound(PATH + "backgroundsound.wav");
-        SoundPlayer.setVolume(currvolumeLevel);
+        
 
         // Adjust difficulty level by user's config
         if (difficultyLevel > 1) {
@@ -110,11 +118,6 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
                 //System.out.println("key is supposed to be moving 02");
             }
         });
-    }
-
-    public static void setVolumeLevel(int volume) {
-        currvolumeLevel = volume;
-        SoundPlayer.setVolume(volume);
     }
 
     public static void setBackgroundName(String n) {
