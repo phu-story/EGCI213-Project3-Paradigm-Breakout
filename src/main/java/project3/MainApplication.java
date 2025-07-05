@@ -39,7 +39,7 @@ public class MainApplication extends JFrame{
     private MainApplication currentFrame;
     static final String PATH = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
     private static final String FILE_LOGO = PATH + "Logo.png";
-    private static int volumeLevel = 0;
+    private static int volumeLevel = 50;
     private static int difficultyLevel = 1;
 
     // Create frame
@@ -320,16 +320,16 @@ public class MainApplication extends JFrame{
         btnGroup.add(toggleButton[1]);
         btnGroup.add(toggleButton[2]);
         btnGroup.add(toggleButton[3]);
-        btnGroup.add(toggleButton[3]);
         btnGroup.add(toggleButton[4]);
 
         for (int i = 0; i <= 4; i++) {
             final int level = i * 25; // 0, 25, 50, 75, 100
             toggleButton[i].addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ev) {
-                    volumeLevel = level;
-                }
-            });
+            public void actionPerformed(ActionEvent ev) {                                                                                                                                 
+            volumeLevel = level;
+            SoundPlayer.setVolume(volumeLevel); // apply the change
+    }
+});
         }
 
         JPanel panel = new JPanel(new BorderLayout());

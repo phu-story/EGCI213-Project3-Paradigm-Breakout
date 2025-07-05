@@ -5,6 +5,7 @@ import java.io.File;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 
 public class SoundPlayer {
 private static Clip soundClip, backgroundClip;
@@ -43,6 +44,25 @@ private static Clip soundClip, backgroundClip;
             backgroundClip.stop();
             backgroundClip.close();
         }
+    }
+
+    public static void setVolume(int volume){
+        float gain = calVolume(volume);
+        //for both sound 
+        if (soundClip != null && soundClip.isOpen()) {
+        FloatControl volumeControl = (FloatControl) soundClip.getControl(FloatControl.Type.MASTER_GAIN);
+        volumeControl.setValue(gain);
+    }
+    if (backgroundClip != null && backgroundClip.isOpen()) {
+        FloatControl volumeControl = (FloatControl) backgroundClip.getControl(FloatControl.Type.MASTER_GAIN);
+        volumeControl.setValue(gain);
+    }
+    }
+
+
+    private static float calVolume(int volume) {
+        if(volume == 0) return -80.0f; //mute
+        return -40.0f + (46.0f*volume /100.0f); //1-100 maps to -80.0f to 6.0f
     }
 
 }

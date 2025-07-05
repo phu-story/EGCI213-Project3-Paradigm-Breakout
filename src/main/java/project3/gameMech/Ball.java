@@ -8,19 +8,22 @@ import javax.swing.ImageIcon;
 
 class Ball
 {
-    private int x, y, cx, cy, speed, size;
+    private int x, y, cx, cy, speed, width, height;
     private final Color color;
     //static final int MAX_SPEED = 7;
     static final int MAX_SPEED = 14;
+    private static final Image ballImage = new ImageIcon(PongGame.PATH + "ball.png").getImage();
     
-    public Ball(int x, int y, int cx, int cy, int speed, Color color, int size) {
+    public Ball(int x, int y, int cx, int cy, int speed, Color color, int width, int height) {
         this.x = x;
         this.y = y;
         this.cx = cx;
         this.cy = cy;
         this.speed = speed;
         this.color = color;
-        this.size = size;
+        this.width = width;
+        this.height = height;
+        
     }
 
     public Ball(Ball b) {
@@ -30,18 +33,14 @@ class Ball
         this.cy = b.cy;
         this.speed = b.speed;
         this.color = b.color;
-        this.size = b.size;
+        this.width = width;
+        this.height = height;
     }
     
     public void paint(Graphics g)
-    {
-        //g.setColor(color);
+    { //ball image
         
-        //g.fillOval(x, y, size, size);
-        
-        // set background
-        Image ballImage= new ImageIcon(PongGame.PATH + "ball.png").getImage();
-        g.drawImage(ballImage, x, y, 40, 30, null);
+        g.drawImage(ballImage, x, y, width, height, null); //should be 40*30
     }
 
     public void moveBall()
@@ -57,11 +56,11 @@ class Ball
         * @param bottom - the y value of the bottom of the screen
         */
 
-        if(y > bottom-size - 30)
+        if(y > bottom-height-25)
         {
             reverseY();
         }
-        else if(y < top + 5)
+        else if(y < top-8)
         {
             reverseY();
         }
@@ -89,7 +88,8 @@ class Ball
 
     public int getY()               { return y; }
     public int getX()               { return x; }
-    public int getSize()            { return size; }
+    public int getWidth() { return width; } 
+    public int getHeight() { return height; } 
     public void setX(int x)         { this.x = x; }
     public void setY(int y)         { this.y = y; }
     public void setCx(int cx)       { this.cx = cx; }
@@ -106,5 +106,7 @@ class Ball
             cy = (cy/Math.abs(cy) * speed);
         }
     }
+
+
 
 }

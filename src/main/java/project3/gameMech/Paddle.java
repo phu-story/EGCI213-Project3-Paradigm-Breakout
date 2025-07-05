@@ -39,7 +39,7 @@ class Paddle
     public void paint(Graphics g)
     {
         g.setColor(color);
-        g.fillRect(x, y, PADDLE_WIDTH, height);
+        g.fillRect(x, y, PADDLE_WIDTH, height); 
        
     }
     
@@ -84,9 +84,9 @@ class Paddle
         int rightX = x + PADDLE_WIDTH;
         int bottomY = y + height;
 
-        if( ( b.getX() + b.getSize() ) > x && b.getX() < rightX ) //check if ball is between the paddle (x cord)
+        if( ( b.getX() + b.getWidth() ) > x && b.getX() < rightX ) //check if ball is between the paddle (x cord)
         {
-            if( ( b.getY() + b.getSize() ) > y && b.getY() < bottomY) //check if ball is between the paddle (y cord)
+            if( ( b.getY() + b.getHeight() ) > y && b.getY() < bottomY) //check if ball is between the paddle (y cord)
             {
                 return true;
             }

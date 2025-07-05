@@ -62,8 +62,13 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
     public PongGame(int difficultyLevel, int winPoint)
     {
         //add sound 
+    
+
+        
+        //SoundPlayer.playBackgroundSound(PATH + "backgroundsound.wav");
         
         SoundPlayer.playBackgroundSound(PATH + "backgroundsound.wav");
+        
         // Adjust difficulty level by user's config
         if (difficultyLevel > 1) {
             System.out.println(difficultyLevel);
@@ -74,7 +79,7 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
             pcPaddleSpeed = 3 + difficultyLevel;
         }
 
-        gameBall = new Ball(300, 200 , cx ,cy , ballSpeed , ballColor, 10); //SPEED IS 3
+        gameBall = new Ball(300, 200 , cx ,cy , ballSpeed , ballColor, 40, 30); //SPEED IS 3
         futureBall = new Ball(gameBall);
         userPaddle = new Paddle(10, WINDOW_HEIGHT/2, userPaddleHeight, userPaddleSpeed, userPaddleColor); //SPEED CAN CHANGE HERE, COLOR AS WELL
         pcPaddle   = new Paddle(WINDOW_WIDTH - 40, WINDOW_HEIGHT/2, 
@@ -245,7 +250,8 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         if(userPaddle.checkCollision(gameBall))
         {
             gameBall.reverseX();
-            gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH + 1);
+            gameBall.setX(userPaddle.getX() + (Paddle.PADDLE_WIDTH - 6));
+            
             bounceCount++;
 
             SoundPlayer.playsound(PATH + "hitsound.wav");
@@ -254,14 +260,14 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         if(pcPaddle.checkCollision(gameBall))
         {
             gameBall.reverseX();
-            gameBall.setX(pcPaddle.getX() - 10); // make it so that some part of the ball still stuck inside the paddle
+            gameBall.setX(pcPaddle.getX() - (gameBall.getWidth()- 5)); // make it so that some part of the ball still stuck inside the paddle 
                                                    //make it more.. collision realistic?
             futureBall = new Ball(gameBall);                         //REMOVE TS PART FOR SIMPLER AI
             //reset the detected collision point
             detectedCollideY = -1; 
             pcGotToTarget = false;                                  //TO THIS
             bounceCount ++;
-
+ 
             SoundPlayer.playsound(PATH + "hitsound.wav");
 
             if((int)(Math.random() * 3) == 0)
@@ -278,7 +284,7 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         }
 
         outXBound(gameBall); //belong to this class, if ball gets out of bound, then someone loses
-
+        
 
     }
 
@@ -305,7 +311,7 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
             e.printStackTrace();
         }
 
-        gameBall = new Ball(300, 200 , cx ,cy , ballSpeed , ballColor, 10); //SPEED IS 3
+        gameBall = new Ball(300, 200 , cx ,cy , ballSpeed , ballColor, 40, 30); //SPEED IS 3
         futureBall = new Ball(gameBall);
         userPaddle = new Paddle(10, 200, userPaddleHeight, userPaddleSpeed, userPaddleColor); //SPEED CAN CHANGE HERE, COLOR AS WELL
         pcPaddle = new Paddle(WINDOW_WIDTH - 40, WINDOW_HEIGHT/2, 
@@ -329,7 +335,7 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
             pcScore++;
             reset();
         }
-        else if(gameBall.getX() > WINDOW_WIDTH)
+        else if(gameBall.getX() >= WINDOW_WIDTH)
         {
             userScore++;
             reset();
