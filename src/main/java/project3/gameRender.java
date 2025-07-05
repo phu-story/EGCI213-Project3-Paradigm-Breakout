@@ -42,6 +42,7 @@ public class gameRender extends JFrame{
         // playArea.add(textArea);
 
         PongGame game = new PongGame(difficultyLevel, winPoint);
+        
         playArea.add(game);
 
         playArea.setVisible(true);

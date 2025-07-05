@@ -54,12 +54,15 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
     private boolean upKeyPressed=false, downKeyPressed=false;
 
     static final String PATH = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
+    private static Image background;
+    private static String backgroundName = "BG1";
     
     
 
     public PongGame(int difficultyLevel, int winPoint)
     {
-        //add sound background
+        //add sound 
+        
         SoundPlayer.playBackgroundSound(PATH + "backgroundsound.wav");
         // Adjust difficulty level by user's config
         if (difficultyLevel > 1) {
@@ -111,6 +114,24 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
             }
         });
     }
+
+    
+
+    public static void setBackgroundName(String n) {
+        backgroundName = n;
+        
+        try {
+            background = new ImageIcon(PATH + backgroundName +".png").getImage();
+        } catch (Exception e) {
+            
+        }
+        
+    }
+
+    public static String getBackgroundName() {
+        return backgroundName;
+    }
+
     
     // To-do: Further Ui work
     @Override
@@ -119,7 +140,7 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         
         super.paintComponent(g);
         // set background
-        Image background = new ImageIcon(PATH + "background.png").getImage();
+        background = new ImageIcon(PATH + backgroundName +".png").getImage();
         g.drawImage(background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
        
         

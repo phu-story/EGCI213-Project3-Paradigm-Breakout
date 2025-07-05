@@ -27,6 +27,7 @@ import javax.swing.event.*;
 
 import java.awt.event.*;
 
+import project3.gameMech.PongGame;
 import project3.gameMech.SoundPlayer;
 
 public class MainApplication extends JFrame{
@@ -36,7 +37,7 @@ public class MainApplication extends JFrame{
     
     private JPanel contentPane;
     private MainApplication currentFrame;
-    private static final String PATH = "src/main/java/project3/";
+    static final String PATH = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
     private static final String FILE_LOGO = PATH + "Logo.png";
     private static int volumeLevel = 0;
     private static int difficultyLevel = 1;
@@ -64,6 +65,8 @@ public class MainApplication extends JFrame{
                         contentPane.add(getMainMenu()); 
                         contentPane.revalidate(); //refresh
                         contentPane.repaint();
+                        contentPane.removeKeyListener(this);
+                        
                     }
 
                 } else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -80,17 +83,16 @@ public class MainApplication extends JFrame{
         contentPane = (JPanel) getContentPane();
         //contentPane.setBackground(new Color(20, 16, 24));
         //set path for background
-        final String Path = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
         // Set background panel
         JPanel backgroundPanel = new JPanel() {
-            private Image background = new ImageIcon(Path + "background.png").getImage();
+            private Image background = new ImageIcon(PATH + "BG1.png").getImage();
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 g.drawImage(background, 0, 0, 800, 600, this);
             }
         };
-        backgroundPanel.setLayout(null); // null = Absolute position
+        backgroundPanel.setLayout(null); 
         setContentPane(backgroundPanel);
         contentPane = (JPanel) getContentPane();
         
@@ -253,7 +255,9 @@ public class MainApplication extends JFrame{
                                 configArea.add(soundPanel());
                                 break;
                             case 3:     // BG Image
-                                configArea.add(selectBGPanel());
+                                PongGame pongGamePanel = new PongGame(0, 0); //for preview
+                                configArea.add(selectBGPanel(pongGamePanel));
+                                SoundPlayer.stop();
                                 break;
                             case 4:     // Credits
                                 configArea.add(creditsPanel());
@@ -344,49 +348,60 @@ public class MainApplication extends JFrame{
     } // End of soundPanel
 
     // Helper method to handle JList in option pane, subset of settings
-    public JPanel selectBGPanel() {
-        String message = "Why did I even chose STEM";
-        JTextArea textArea = new JTextArea(message);
-        textArea.setEditable(false);
-        textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    public JPanel selectBGPanel(PongGame gamePanel) {
+    String[] bgNames = { "BG1","BG2", "BG3", "BG4" };
+    String[] options = { "Basic", "Galaxy", "Retro", "Plain Blue" };
+    
+    JLabel previewLabel = new JLabel();
+    previewLabel.setPreferredSize(new Dimension(200, 100));
+    previewLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        JToggleButton[] toggleButton = new JToggleButton[5];
-        ButtonGroup btnGroup = new ButtonGroup();
+    final String[] selected = { PongGame.getBackgroundName() }; //name of the selected background
 
-        toggleButton[0] = new JRadioButton("");           
-        toggleButton[1] = new JRadioButton("");  
-        toggleButton[2] = new JRadioButton("");  
-        toggleButton[3] = new JRadioButton("");  
-        toggleButton[4] = new JRadioButton("");  
-        toggleButton[0].setSelected(true);
-        btnGroup.add(toggleButton[0]);                                  
-        btnGroup.add(toggleButton[1]);
-        btnGroup.add(toggleButton[2]);
-        btnGroup.add(toggleButton[3]);
-        btnGroup.add(toggleButton[4]);
+    JRadioButton[] radioButtons = new JRadioButton[bgNames.length];
+    ButtonGroup group = new ButtonGroup();
 
-        for (int i = 0; i <= 4; i++) {
-            toggleButton[i].addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ev) {
-                    // BG Image 1-4
-                }
-            });
+    for (int i = 0; i < bgNames.length; i++) {
+        final int index = i;
+        radioButtons[i] = new JRadioButton(options[i]);
+        group.add(radioButtons[i]);
+
+        if (bgNames[i].equals(selected[0])) {
+            radioButtons[i].setSelected(true);
+            previewLabel.setIcon(new ImageIcon(PATH + selected[0] + ".png"));
         }
+    
+    radioButtons[i].addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        selected[0] = bgNames[index];
+        previewLabel.setIcon(new ImageIcon(PATH + selected[0] + ".png"));
+        }
+    });
+}
+    
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(textArea, BorderLayout.NORTH);
+    JButton applyButton = new JButton("Apply Background");
+    applyButton.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        gamePanel.setBackgroundName(selected[0]); 
+        gamePanel.repaint();
+    }
+});
 
-        JPanel radioPanel = new JPanel();
-        radioPanel.setLayout(new BoxLayout(radioPanel, BoxLayout.Y_AXIS));
-        radioPanel.add(toggleButton[0]);
-        radioPanel.add(toggleButton[1]);
-        radioPanel.add(toggleButton[2]);
-        radioPanel.add(toggleButton[3]);
-        radioPanel.add(toggleButton[4]);
-        panel.add(radioPanel, BorderLayout.CENTER);
+    JPanel panel = new JPanel(new BorderLayout());
+    JPanel radioPanel = new JPanel();
+    radioPanel.setLayout(new BoxLayout(radioPanel, BoxLayout.Y_AXIS));
 
-        return panel;
-    } // End of selectBGPanel
+    for (JRadioButton btn : radioButtons) radioPanel.add(btn);
+
+    panel.add(previewLabel, BorderLayout.NORTH);
+    panel.add(radioPanel, BorderLayout.CENTER);
+    panel.add(applyButton, BorderLayout.SOUTH);
+
+    return panel;
+} // End of selectBGPanel
 
     // Helper method to handle JList in option pane, subset of settings
     public JPanel creditsPanel() {
