@@ -128,19 +128,42 @@ public class PongGame extends GameMode {
     }
 
     public void intGame() { // comes after constructor
-        gameBall = new Ball(300, 200, globalConfig.getCx(), globalConfig.getCy(), globalConfig.getBallSpeed(),
-                globalConfig.getBallColor(), 10); // SPEED IS 3
-        futureBall = new Ball(gameBall);
-        userPaddle = new Paddle(10, WINDOW_HEIGHT / 2,
-                globalConfig.getUserPaddleHeight(),
-                globalConfig.getUserPaddleSpeed(),
-                globalConfig.getUserPaddleColor());
 
-        pcPaddle = new Paddle(WINDOW_WIDTH - 40, WINDOW_HEIGHT / 2, // x,y cord of starting position
-                globalConfig.getPcPaddleHeight(), // Paddle's height
-                globalConfig.getPcPaddleSpeed(), // Moveable unit per frame
-                globalConfig.getPcPaddleColor() // paddle color
-        );
+        if (globalConfig.getMultiplayer()) {
+            // idk why but when frame gets scale paddle will try to go to certain point first and uncontrollably
+            // this will control the paddle spawn to match its target point
+            userMouseY = (WINDOW_HEIGHT/2) - (globalConfig.getUserPaddleHeight()/2);
+            pcMouseY = (WINDOW_HEIGHT/2) - (globalConfig.getPcPaddleHeight()/2);
+
+            gameBall = new Ball(300, 200, globalConfig.getCx(), globalConfig.getCy(), globalConfig.getBallSpeed(),
+                globalConfig.getBallColor(), 10); // SPEED IS 3
+            futureBall = new Ball(gameBall);
+            userPaddle = new Paddle(10, (WINDOW_HEIGHT/2) - globalConfig.getUserPaddleHeight(),
+                    globalConfig.getUserPaddleHeight(),
+                    globalConfig.getUserPaddleSpeed(),
+                    globalConfig.getUserPaddleColor());
+            pcPaddle = new Paddle(WINDOW_WIDTH - 40, (WINDOW_HEIGHT/2) - globalConfig.getPcPaddleHeight(), // x,y cord of starting position
+                    globalConfig.getPcPaddleHeight(), // Paddle's height
+                    globalConfig.getPcPaddleSpeed(), // Moveable unit per frame
+                    globalConfig.getPcPaddleColor() // paddle color
+            );
+        } else {
+            gameBall = new Ball(300, 200, globalConfig.getCx(), globalConfig.getCy(), globalConfig.getBallSpeed(),
+                globalConfig.getBallColor(), 10); // SPEED IS 3
+            futureBall = new Ball(gameBall);
+            userPaddle = new Paddle(10, (WINDOW_HEIGHT / 2) - (globalConfig.getUserPaddleHeight()/2),
+                    globalConfig.getUserPaddleHeight(),
+                    globalConfig.getUserPaddleSpeed(),
+                    globalConfig.getUserPaddleColor());
+
+            pcPaddle = new Paddle(WINDOW_WIDTH - 40, (WINDOW_HEIGHT / 2) - (globalConfig.getPcPaddleHeight()/2), // x,y cord of starting position
+                    globalConfig.getPcPaddleHeight(), // Paddle's height
+                    globalConfig.getPcPaddleSpeed(), // Moveable unit per frame
+                    globalConfig.getPcPaddleColor() // paddle color
+            );
+        }
+
+        
     }
     // To-do: Further Ui work
     @Override
@@ -266,6 +289,8 @@ public class PongGame extends GameMode {
                 }
             }
         } else {                                    // Multiplayer
+            System.out.println(pcMouseY);
+
             pcPaddle.moveToward(pcMouseY);
             userPaddle.moveToward(userMouseY);
 
@@ -346,8 +371,8 @@ public class PongGame extends GameMode {
         pcGotToTarget = false; // might be useful in future
         pcAccidentalMiss = false;
 
-        userMouseY = globalConfig.getIntUserLoc() + globalConfig.getUserPaddleHeight()/2;
-        pcMouseY = globalConfig.getIntPcLoc() + globalConfig.getPcPaddleHeight()/2;
+        userMouseY = WINDOW_HEIGHT/2 - globalConfig.getUserPaddleHeight()/2;
+        pcMouseY = WINDOW_HEIGHT/2 - globalConfig.getPcPaddleHeight()/2;
         upKeyPressed = false;
         downKeyPressed = false;
         wPressed = false;
