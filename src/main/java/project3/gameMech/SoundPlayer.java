@@ -8,28 +8,27 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 
 public class SoundPlayer {
-private static Clip soundClip, backgroundClip;
 
-    
-    public static void playsound(String file){
-        
+    private static Clip soundClip, backgroundClip;
+
+    public static void playsound(String file) {
+
         try {
             File soundFile = new File(file);
             AudioInputStream audio = AudioSystem.getAudioInputStream(soundFile);
             soundClip = AudioSystem.getClip();
             soundClip.open(audio);
-            soundClip.start();  
+            soundClip.start();
         } catch (Exception e) {
         }
     }
 
-    
     public static void playBackgroundSound(String file) {
         try {
             AudioInputStream audio = AudioSystem.getAudioInputStream(new File(file));
             backgroundClip = AudioSystem.getClip();
             backgroundClip.open(audio);
-            backgroundClip.loop(Clip.LOOP_CONTINUOUSLY); 
+            backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
             backgroundClip.start();
         } catch (Exception e) {
         }
@@ -46,23 +45,24 @@ private static Clip soundClip, backgroundClip;
         }
     }
 
-    public static void setVolume(int volume){
+    public static void setVolume(int volume) {
         float gain = calVolume(volume);
         //for both sound 
         if (soundClip != null && soundClip.isOpen()) {
-        FloatControl volumeControl = (FloatControl) soundClip.getControl(FloatControl.Type.MASTER_GAIN);
-        volumeControl.setValue(gain);
+            FloatControl volumeControl = (FloatControl) soundClip.getControl(FloatControl.Type.MASTER_GAIN);
+            volumeControl.setValue(gain);
+        }
+        if (backgroundClip != null && backgroundClip.isOpen()) {
+            FloatControl volumeControl = (FloatControl) backgroundClip.getControl(FloatControl.Type.MASTER_GAIN);
+            volumeControl.setValue(gain);
+        }
     }
-    if (backgroundClip != null && backgroundClip.isOpen()) {
-        FloatControl volumeControl = (FloatControl) backgroundClip.getControl(FloatControl.Type.MASTER_GAIN);
-        volumeControl.setValue(gain);
-    }
-    }
-
 
     private static float calVolume(int volume) {
-        if(volume == 0) return -80.0f; //mute
-        return -40.0f + (46.0f*volume /100.0f); //1-100 maps to -80.0f to 6.0f
+        if (volume == 0) {
+            return -80.0f; //mute
+
+                }return -40.0f + (46.0f * volume / 100.0f); //1-100 maps to -80.0f to 6.0f
     }
 
 }
