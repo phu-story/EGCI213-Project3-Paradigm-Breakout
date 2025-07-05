@@ -3,8 +3,8 @@ import project3.gameMech.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+// import java.awt.event.KeyAdapter;
+// import java.awt.event.KeyEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -16,22 +16,6 @@ public class gameRender extends JFrame{
         playArea.setSize(800, 600);
         mainFrame.setTitle("A random ball bouncing game");
         playArea.setFocusable(true);
-
-        // Press ESC to exit
-        playArea.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    int result = JOptionPane.showConfirmDialog(playArea, "Are you sure you want to exit?", "Confirm Exit", JOptionPane.YES_NO_OPTION);
-                    if (result == JOptionPane.YES_OPTION) {
-                        playArea.removeAll();
-                        mainFrame.getMainMenu();
-                        playArea.revalidate();
-                        playArea.repaint();
-                        playArea.removeKeyListener(this);
-                    }
-                }
-            }
-        });
         
         // For dubug and test, feel free to comment it
         // String message = "Input level: " + difficultyLevel + 

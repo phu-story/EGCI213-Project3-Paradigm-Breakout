@@ -51,7 +51,6 @@ public class MainApplication extends JFrame{
         requestFocusInWindow();
         addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                System.err.println();
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     System.exit(0);
                 } else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
