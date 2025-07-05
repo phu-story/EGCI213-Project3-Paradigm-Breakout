@@ -254,14 +254,12 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
             pcScore++;
             if (winpoint > 0 && pcScore >= winpoint) {
                 System.exit(0);
-
             }
             reset();
         } else if (gameBall.getX() > WINDOW_WIDTH) {
             userScore++;
             if (winpoint > 0 && userScore >= winpoint) {
                 System.exit(0);
-
             }
             reset();
         }

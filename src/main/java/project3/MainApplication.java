@@ -123,7 +123,7 @@ public class MainApplication extends JFrame{
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
                 if (startButton.isEnabled()) {
-                    int winPoint = 1;
+                    int winPoint = 0;
                     // If difficulty isn't Endless
                     if (difficultyLevel != 0) {
                         // Inquire user by pop-up box
