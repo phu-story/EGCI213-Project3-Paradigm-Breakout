@@ -54,18 +54,21 @@ class Paddle
         //@param centerY is also a "relative" center of the paddle, based on current y
         int centerY = y + height/2;
 
-        if(Math.abs(centerY - moveToY) > speed) //check whether the difference between moveTo
-        {                                       //and point we want to go is not more than the distance
-            if(centerY >  moveToY )              //paddle usually travels
+        //check the difference between moveTo
+        if (Math.abs(centerY - moveToY) > speed)
+        {
+            if (centerY > moveToY)
             {
                 y -= speed;
+                if (y < 0)
+                    y = 0;
             }
-
-            if(centerY < moveToY )
+            else if (centerY < moveToY)
             {
                 y += speed;
+                if (y > PongGame.WINDOW_HEIGHT - height-23)
+                    y = PongGame.WINDOW_HEIGHT - height-23;
             }
-
         }
     }
 

@@ -166,8 +166,10 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
 
         if (!pcGotToTarget) {
             // This should fix PC's paddle fall out off screen [10, 500]
-            int yAxis_MoveLimit = Math.max(10, Math.min(WINDOW_HEIGHT - 10, detectedCollideY));
-            pcPaddle.moveToward(yAxis_MoveLimit); // advance pc detection, for sees where the ball is going, HARDER GAME
+            // It's a quick patch, will cause futher when program scale
+            // int yAxis_MoveLimit = Math.max(10, Math.min(WINDOW_HEIGHT - 10, detectedCollideY));
+
+            pcPaddle.moveToward(detectedCollideY); // advance pc detection, for sees where the ball is going, HARDER GAME
                                                   // MODE
         } else {
             if (pcPaddle.getCenterY() > detectedCollideY + 10) {
