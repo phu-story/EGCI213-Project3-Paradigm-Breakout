@@ -1,6 +1,0 @@
-This should be the lastest work
-
-limited life system not implemented yet, waiting to be implemented, since it needs GUI and main menu to restart the game
-select gamemode by changing methods in GameMode.java, but the real origin of changes happens in Main.java
-
-good luck.
