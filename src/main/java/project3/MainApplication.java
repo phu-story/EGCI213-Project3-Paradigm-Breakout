@@ -151,7 +151,7 @@ public class MainApplication extends JFrame {
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
                 if (startButton.isEnabled()) {
-                    int winPoint = 1;
+                    int winPoint = 0;
                     // If difficulty isn't Endless
                     if (difficultyLevel != 0) {
                         // Inquire user by pop-up box
@@ -162,9 +162,7 @@ public class MainApplication extends JFrame {
                                     return;    // if user pressed cancelled
                                 }                                // Try interpret to int
                                 winPoint = Integer.parseInt(input);
-                                if (difficultyLevel <= 0) {
-                                    throw new Exception();
-                                }
+                                if (winPoint <= 0) throw new Exception();
                                 break;
                             } catch (Exception e) {
                                 input = JOptionPane.showInputDialog(null, "Invalid Input\nHow many points to win?", "Winning Score select", JOptionPane.INFORMATION_MESSAGE);
@@ -220,11 +218,12 @@ public class MainApplication extends JFrame {
     // Helper method to add settings button, subset of main menu
     public JButton constructSettingsBtn() {
         JButton settingsButton = new JButton("Settings");
+        // settingsButton.setLocationRelativeTo(null);
         settingsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
                 JFrame settingsPanel = new JFrame("Settings");
                 settingsPanel.setSize(500, 300);
-                // settingsPanel.setLocationRelativeTo(null);
+                settingsPanel.setLocationRelativeTo(null);
                 settingsPanel.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
                 // Left: JList in a scroll pane

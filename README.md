@@ -1,0 +1,1 @@
+From now you might need to `gh pr create` to  make change towards the master's branch, if found yourself a hard time, I recommended create your own dedicate development branch as an isolate work environment.
