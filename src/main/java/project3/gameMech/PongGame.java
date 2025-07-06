@@ -30,7 +30,6 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
      */
     private Paddle userPaddle, pcPaddle;
     private int userMouseY;
-    private int winpoint;
 
     // customizable attribute
     /*
@@ -62,12 +61,12 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
 
     static final String PATH = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
     private static Image background;
+    
+    // settings
     private static String backgroundName = "BG1";
     private static int currvolumeLevel = 50;
-
-    // settings
-    private int difficultyLevel;
     private int winPoint;
+    private int difficultyLevel;
 
     public PongGame(int difficultyLevel, int winPoint) {
 
@@ -330,13 +329,13 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         if (gameBall.getX() < 0) // condition checking whether lose or not
         {
             pcScore++;
-            if (winpoint > 0 && pcScore >= winpoint) {
+            if (winPoint > 0 && pcScore >= winPoint) {
                 System.exit(0);
             }
             reset();
         } else if (gameBall.getX() > WINDOW_WIDTH) {
             userScore++;
-            if (winpoint > 0 && userScore >= winpoint) {
+            if (winPoint > 0 && userScore >= winPoint) {
                 System.exit(0);
             }
             reset();
