@@ -57,7 +57,6 @@ public class MainApplication extends JFrame {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                //System.err.println();
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     int exit = JOptionPane.showConfirmDialog(MainApplication.this, "Exit the game and return to the Main Menu?", "Exit Game", JOptionPane.YES_NO_OPTION);
                     if (exit == JOptionPane.YES_OPTION) {

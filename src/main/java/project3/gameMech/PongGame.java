@@ -1,24 +1,13 @@
 package project3.gameMech;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+import javax.swing.*;
 
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-
-import project3.gameRender;
+// import project3.gameRender;
 
 import java.awt.*;
 import java.awt.event.*;
 
-public class PongGame extends JPanel implements MouseMotionListener, KeyListener {
-
+public class PongGame extends GameMode {
     // Designed dimension 640 x 480
     // Desired dimension 800 x 600
     static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
@@ -29,7 +18,7 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
      * pc paddle responds to that ball instead
      */
     private Paddle userPaddle, pcPaddle;
-    private int userMouseY;
+    private int userMouseY, pcMouseY;
     private int winpoint;
 
     // customizable attribute
@@ -41,24 +30,33 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
      * useful
      * in increaseSpeed() method, aside from that, it has no use, for now
      */
-    private int cx = 4, cy = 4, ballSpeed = 4; // to make it harder, increase all THREE variables
-    private int userPaddleSpeed = 3;
-    private int pcPaddleSpeed = 3;
-    private final int refreshRate = gameRender.DELAY; // want to change this? change main's delay
-    private final Color pcPaddleColor = Color.RED, userPaddleColor = Color.BLUE, ballColor = Color.YELLOW;
-    private boolean pcAccidentalMiss;
 
-    private final int userPaddleHeight = 80;
-    private final int pcPaddleHeight = 80;
+    GameMode globalConfig = new GameMode();
+    
+    // private int cx = 4, cy = 4, ballSpeed = 4; // to make it harder, increase all THREE variables
+    // private int userPaddleSpeed = 3;
+    // private int pcPaddleSpeed = 3;
+    // private final int refreshRate = gameRender.DELAY; // want to change this? change main's delay
+    // private final Color pcPaddleColor = Color.RED, userPaddleColor = Color.BLUE, ballColor = Color.YELLOW;
+    // private boolean pcAccidentalMiss;
 
-    private int userScore, pcScore, bounceCount;
+    // private final int userPaddleHeight = 80;
+    // private final int pcPaddleHeight = 80;
+
+    private int userScore, pcScore, bounceCount, intUserLoc2, intPcLoc2;
     private int detectedCollideY;
     private boolean pcGotToTarget;
     private int oscillateTowards;
 
     private Timer paddleKeyTimer;
-
-    private boolean upKeyPressed = false, downKeyPressed = false;
+    private boolean upKeyPressed=false, downKeyPressed=false;
+    private boolean wPressed=false, sPressed=false;
+    
+    // I don't know but remove this, java won't listen key
+    public void addNotify() {
+        super.addNotify();
+        requestFocusInWindow();
+    }
 
     static final String PATH = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
     private static Image background;
@@ -70,68 +68,74 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
     private int winPoint;
 
     public PongGame(int difficultyLevel, int winPoint) {
-
-        this.difficultyLevel = difficultyLevel;
-        this.winPoint = winPoint;
+        this.winpoint = winPoint;
 
         SoundPlayer.stop();
         SoundPlayer.playBackgroundSound(PATH + "backgroundsound.wav");
 
-        // Adjust difficulty level by user's config
-        if (difficultyLevel > 1) {
-            cx = 4 + difficultyLevel;
-            cy = 4 + difficultyLevel;
-            ballSpeed = 4 + difficultyLevel;
-            userPaddleSpeed = 3 + difficultyLevel;
-            pcPaddleSpeed = 3 + difficultyLevel;
-        }
+        userScore =0; pcScore =0;
+        bounceCount=0;
 
-        gameBall = new Ball(300, 200, cx, cy, ballSpeed, ballColor, 40, 30); // SPEED IS 3
-        futureBall = new Ball(gameBall);
-        userPaddle = new Paddle(10, WINDOW_HEIGHT / 2, userPaddleHeight, userPaddleSpeed, userPaddleColor); // SPEED CAN
-                                                                                                            // CHANGE
-                                                                                                            // HERE,
-                                                                                                            // COLOR AS
-                                                                                                            // WELL
-        pcPaddle = new Paddle(WINDOW_WIDTH - 40, WINDOW_HEIGHT / 2,
-                pcPaddleHeight,
-                pcPaddleSpeed,
-                pcPaddleColor);
-
-        userMouseY = 0;
-
-        userScore = 0;
-        pcScore = 0;
-        bounceCount = 0;
-
-        userScore = 0;
-        pcScore = 0;
-        bounceCount = 0;
-
-        detectedCollideY = -1;
-        pcGotToTarget = false;
-        oscillateTowards = 0;
-        pcAccidentalMiss = false;
-        detectedCollideY = -1;
-        pcGotToTarget = false;
-        oscillateTowards = 0;
-        pcAccidentalMiss = false;
-
-        setFocusable(true);
+        detectedCollideY=-1;
+        pcGotToTarget=false;
+        oscillateTowards=0;
+        pcAccidentalMiss=false;
+        
         requestFocusInWindow();
-
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
         addMouseMotionListener(this);
         addKeyListener(this);
 
-        paddleKeyTimer = new Timer(refreshRate, e -> {
-            if (upKeyPressed && userPaddle.getY() > 0) {
-                userMouseY -= userPaddleSpeed;
-                // System.out.println("key is supposed to be moving 01");
+        intGame();
+
+        paddleKeyTimer = new Timer(getRefreshRate(), e -> {
+            // if (upKeyPressed && userPaddle.getY() > 0) {
+            //         userMouseY -= globalConfig.getUserPaddleSpeed();
+            //         // System.out.println("key is supposed to be moving 01");
+            //     }
+            //     if (downKeyPressed && userPaddle.getY() < WINDOW_HEIGHT - userPaddle.getHeight()) {
+            //         userMouseY += globalConfig.getUserPaddleSpeed();
+            //         // System.out.println("key is supposed to be moving 02");
+            //     }
+
+            // paddleKeyTimer = new Timer(globalConfig.getRefreshRate(), e -> {
+            //     
+            // });
+
+            if (!getMultiplayer()) {
+                if (upKeyPressed && userPaddle.getY() > 0) {
+                    userMouseY -= globalConfig.getUserPaddleSpeed();
+                    // System.out.println("key is supposed to be moving 01");
+                }
+                if (downKeyPressed && userPaddle.getY() < WINDOW_HEIGHT - userPaddle.getHeight() - 23) {
+                    userMouseY += globalConfig.getUserPaddleSpeed();
+                    // System.out.println("key is supposed to be moving 02");
+                }
+            } else {
+                // Left Paddle
+                if (upKeyPressed && pcPaddle.getY() > 0) {
+                    pcMouseY -= globalConfig.getPcPaddleSpeed();
+                    // System.out.println("key is supposed to be moving 01");
+                }
+                // Right Paddle
+                if (wPressed && userPaddle.getY() > 0) {
+                    userMouseY -= globalConfig.getUserPaddleSpeed();
+                    // System.out.println("key is supposed to be moving 03");
+                }
+
+                // Left Paddle
+                if (downKeyPressed && pcPaddle.getY() < WINDOW_HEIGHT - pcPaddle.getHeight() - 23) {
+                    pcMouseY += globalConfig.getPcPaddleSpeed();
+                    // System.out.println("key is supposed to be moving 02");
+                }
+                // Right Paddle
+                if (sPressed && userPaddle.getY() < WINDOW_HEIGHT - userPaddle.getHeight() - 23) {
+                    userMouseY += globalConfig.getUserPaddleSpeed();
+                    // System.out.println("key is supposed to be moving 04");
+                }
             }
-            if (downKeyPressed && userPaddle.getY() < WINDOW_HEIGHT - userPaddle.getHeight()) {
-                userMouseY += userPaddleSpeed;
-                // System.out.println("key is supposed to be moving 02");
-            }
+
         });
     }
 
@@ -150,6 +154,49 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         return backgroundName;
     }
 
+    public void intGame() { // comes after constructor
+
+        if (globalConfig.getMultiplayer()) {
+            // idk why but when frame gets scale paddle will try to go to certain point first and uncontrollably
+            // this will control the paddle spawn to match its target point
+            userMouseY = (WINDOW_HEIGHT/2) - (globalConfig.getUserPaddleHeight()/2);
+            pcMouseY = (WINDOW_HEIGHT/2) - (globalConfig.getPcPaddleHeight()/2);
+
+            gameBall = new Ball(300, 200, 
+                globalConfig.getCx(), 
+                globalConfig.getCy(), 
+                globalConfig.getBallSpeed(),
+                globalConfig.getBallColor(), 
+                40, 30
+            ); // SPEED IS 3
+            futureBall = new Ball(gameBall);
+            userPaddle = new Paddle(10, (WINDOW_HEIGHT/2) - globalConfig.getUserPaddleHeight(),
+                    globalConfig.getUserPaddleHeight(),
+                    globalConfig.getUserPaddleSpeed(),
+                    globalConfig.getUserPaddleColor());
+            pcPaddle = new Paddle(WINDOW_WIDTH - 40, (WINDOW_HEIGHT/2) - globalConfig.getPcPaddleHeight(), // x,y cord of starting position
+                    globalConfig.getPcPaddleHeight(), // Paddle's height
+                    globalConfig.getPcPaddleSpeed(), // Moveable unit per frame
+                    globalConfig.getPcPaddleColor() // paddle color
+            );
+        } else {
+            gameBall = new Ball(300, 200, globalConfig.getCx(), globalConfig.getCy(), globalConfig.getBallSpeed(),
+                globalConfig.getBallColor(), 40, 30); // SPEED IS 3
+            futureBall = new Ball(gameBall);
+            userPaddle = new Paddle(10, (WINDOW_HEIGHT / 2) - (globalConfig.getUserPaddleHeight()/2),
+                    globalConfig.getUserPaddleHeight(),
+                    globalConfig.getUserPaddleSpeed(),
+                    globalConfig.getUserPaddleColor());
+
+            pcPaddle = new Paddle(WINDOW_WIDTH - 40, (WINDOW_HEIGHT / 2) - (globalConfig.getPcPaddleHeight()/2), // x,y cord of starting position
+                    globalConfig.getPcPaddleHeight(), // Paddle's height
+                    globalConfig.getPcPaddleSpeed(), // Moveable unit per frame
+                    globalConfig.getPcPaddleColor() // paddle color
+            );
+        }
+
+        
+    }
     // To-do: Further Ui work
     @Override
     public void paintComponent(Graphics g) {
@@ -166,9 +213,7 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         // label
         String user = String.valueOf(userScore); // score
         String pc = String.valueOf(pcScore);
-        int boxSize = 100 + 80 + (20 * user.toCharArray().length) + 10 + 70 + (20 * pc.toCharArray().length); // calc
-                                                                                                              // header
-                                                                                                              // width
+        int boxSize = 100 + 80 + (20 * user.toCharArray().length) + 10 + 70 + (20 * pc.toCharArray().length); // calc header width
         int x = (800 - boxSize) / 2, y = 20;
 
         Image scoreLabel = new ImageIcon(PATH + "score.png").getImage();
@@ -205,85 +250,138 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         gameBall.moveBall();
         gameBall.bounceOffEdge(0, WINDOW_HEIGHT);
 
-        if (detectedCollideY == -1) {
-            for (int i = 0; i < 10; i++) {
-                futureBall.moveBall();
-                // System.out.println("future moves ball"); //for debugging purpose
-                futureBall.bounceOffEdge(0, WINDOW_HEIGHT);
+        if (!globalConfig.getMultiplayer()) {
+            if (detectedCollideY == -1 && globalConfig.getBetterAi()) {
+                for (int i = 0; i < 10; i++) {
+                    futureBall.moveBall();
+                    // System.out.println("future moves ball"); //for debugging purpose
+                    futureBall.bounceOffEdge(0, WINDOW_HEIGHT);
 
-                if (futureBall.getX() < userPaddle.getX() + Paddle.PADDLE_WIDTH) {
-                    futureBall.reverseX();
-                }
-
-                if (futureBall.getX() > pcPaddle.getX()) {
-                    detectedCollideY = futureBall.getY();
-                    // check whether it actually works or not
-                    System.out.println("Future collision at : " + detectedCollideY);
-                    if (pcAccidentalMiss) {
-                        detectedCollideY += 75;
+                    if (futureBall.getX() < userPaddle.getX() + Paddle.PADDLE_WIDTH) {
+                        futureBall.reverseX();
                     }
 
-                    break;
+                    if (futureBall.getX() > pcPaddle.getX()) {
+                        detectedCollideY = futureBall.getY();
+                        // check whether it actually works or not
+                        System.out.println("Future collision at : " + detectedCollideY);
+                        if (pcAccidentalMiss && globalConfig.getAcMissMode()) {
+                            detectedCollideY += globalConfig.getSwingState();
+                        }
+
+                        break;
+                    }
                 }
             }
-        }
 
-        userPaddle.moveToward(userMouseY);
-        // pcPaddle.moveToward(gameBall.getY()); //EASIEST IMPLEMENTATION, PCPADDLE
-        // ALWAYS MOVES TOWARD THE BALL
-        // We can make it harder though
+            userPaddle.moveToward(userMouseY);
+            // pcPaddle.moveToward(gameBall.getY()); //EASIEST IMPLEMENTATION, PCPADDLE
+            // ALWAYS MOVES TOWARD THE BALL
+            // IMPLEMENTED ALREADY
+            // We can make it harder though
 
-        if (Math.abs((pcPaddle.getY() + pcPaddle.getHeight() / 2) - detectedCollideY) < 3 && !pcGotToTarget) {
-            pcGotToTarget = true;
-            System.out.println("pc paddle got to designated target"); // for better ai movement
+            if (Math.abs((pcPaddle.getY() + pcPaddle.getHeight() / 2) - detectedCollideY) < 1 && !pcGotToTarget) {
+                pcGotToTarget = true;
+                System.out.println("pc paddle got to designated target"); // for better ai movement
 
-        }
-
-        if (!pcGotToTarget) {
-            pcPaddle.moveToward(detectedCollideY); // advance pc detection, for sees where the ball is going, HARDER
-                                                   // GAME MODE
-        } else {
-            if (pcPaddle.getCenterY() > detectedCollideY + 10) {
-                oscillateTowards = 0;
-            } else if (pcPaddle.getCenterY() < detectedCollideY - 10) {
-                oscillateTowards = WINDOW_HEIGHT;
             }
 
-            pcPaddle.moveToward(oscillateTowards);
-        }
+            if (!pcGotToTarget) {
+                if (globalConfig.getBetterAi()) {
+                    pcPaddle.moveToward(detectedCollideY); // advance pc detection, for sees where the ball is going,
+                                                           // HARDER GAME MODE
+                } else {
+                    if (globalConfig.getAcMissMode()) {
+                        int missVar = 0;
+                        if (pcAccidentalMiss) {
+                            missVar += 75; // this is actually wrong but it works, not as intended :shrug:
+                        }
+                        pcPaddle.moveToward(gameBall.getY() + missVar);
+                    } else {
+                        pcPaddle.moveToward(gameBall.getY());
+                    }
+                }
 
-        if (userPaddle.checkCollision(gameBall)) {
-            gameBall.reverseX();
-            gameBall.setX(userPaddle.getX() + (Paddle.PADDLE_WIDTH - 6));
+            } else if (globalConfig.getOscillation()) {
+                if (pcPaddle.getCenterY() > detectedCollideY + globalConfig.getOscillationFrequency()) {
+                    oscillateTowards = 0;
+                } else if (pcPaddle.getCenterY() < detectedCollideY - globalConfig.getOscillationFrequency()) {
+                    oscillateTowards = WINDOW_HEIGHT;
+                }
 
-            bounceCount++;
-
-            SoundPlayer.playsound(PATH + "hitsound.wav");
-        }
-
-        if (pcPaddle.checkCollision(gameBall)) {
-            gameBall.reverseX();
-            gameBall.setX(pcPaddle.getX() - (gameBall.getWidth() - 5)); // make it so that some part of the ball still
-                                                                        // stuck inside the paddle
-            // make it more.. collision realistic?
-            futureBall = new Ball(gameBall); // REMOVE TS PART FOR SIMPLER AI
-            // reset the detected collision point
-            detectedCollideY = -1;
-            pcGotToTarget = false; // TO THIS
-            bounceCount++;
-
-            SoundPlayer.playsound(PATH + "hitsound.wav");
-
-            if ((int) (Math.random() * 3) == 0) {
-                pcAccidentalMiss = true; // PC ACCIDENTAL MISS
-                System.out.println("pc should miss next bounce");
+                pcPaddle.moveToward(oscillateTowards);
             }
-        }
+            // else { }
 
-        if (bounceCount == 5) // DYNAMIC BALL SPEED CHANGE HERE
-        {
-            bounceCount = 0;
-            gameBall.increaseSpeed();
+            if (userPaddle.checkCollision(gameBall)) {
+                gameBall.reverseX();
+                gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH + 1);
+                if (globalConfig.getDynamicBallSpeed()) {
+                    bounceCount++;
+                }
+
+                SoundPlayer.playsound(PATH + "hitsound.wav");
+            }
+
+            if (pcPaddle.checkCollision(gameBall)) {
+                gameBall.reverseX();
+                gameBall.setX(pcPaddle.getX() - 10); // make it so that some part of the ball still stuck inside the
+                                                     // paddle
+                                                     // make it more.. collision realistic?
+                futureBall = new Ball(gameBall); // REMOVE TS PART FOR SIMPLER AI
+                // reset the detected collision point
+                detectedCollideY = -1;
+                pcGotToTarget = false; // TO THIS
+                
+                bounceCount++;
+                SoundPlayer.playsound(PATH + "hitsound.wav");
+
+                if (globalConfig.getCryBabyChance()) {
+                    pcAccidentalMiss = true;
+                    System.out.println("pc should miss next bounce");
+                }
+
+                if ((int) (Math.random() * globalConfig.getPercentChance()) == 0 && globalConfig.getAcMissMode()) {
+                    pcAccidentalMiss = true; // PC ACCIDENTAL MISS
+                    System.out.println("pc should miss next bounce");
+                }
+
+            }
+            if (globalConfig.getDynamicBallSpeed()) {
+                if (bounceCount == 5) // DYNAMIC BALL SPEED CHANGE HERE
+                {
+                    bounceCount = 0;
+                    gameBall.increaseSpeed();
+                }
+            }
+        } else {                                    // Multiplayer
+            // System.out.println(pcMouseY);
+
+            pcPaddle.moveToward(pcMouseY);
+            userPaddle.moveToward(userMouseY);
+
+            if (userPaddle.checkCollision(gameBall)) {
+                gameBall.reverseX();
+                gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH/2 + 5);
+                bounceCount++;
+
+            }
+
+            if (pcPaddle.checkCollision(gameBall)) {
+                gameBall.reverseX();
+                gameBall.setX(pcPaddle.getX() - 45); // make it so that some part of the ball still stuck inside the
+                                                     // paddle
+                                                     // make it more.. collision realistic?
+                // TO THIS
+                bounceCount++;
+            }
+            if (globalConfig.getDynamicBallSpeed()) {
+                if (bounceCount == 5) // DYNAMIC BALL SPEED CHANGE HERE
+                {
+                    bounceCount = 0;
+                    gameBall.increaseSpeed();
+                }
+            }
         }
 
         outXBound(gameBall); // belong to this class, if ball gets out of bound, then someone loses
@@ -297,9 +395,12 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        // userMouseY = e.getY();
 
-        userMouseY = e.getY();
-
+        // To fix
+        if(!globalConfig.getMultiplayer()){
+            userMouseY = e.getY();
+        }
     }
 
     public void reset() {
@@ -309,14 +410,26 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
             e.printStackTrace();
         }
 
-        gameBall = new Ball(300, 200, cx, cy, ballSpeed, ballColor, 40, 30); // SPEED IS 3
-        futureBall = new Ball(gameBall);
-        userPaddle = new Paddle(10, 200, userPaddleHeight, userPaddleSpeed, userPaddleColor); // SPEED CAN CHANGE HERE,
-                                                                                              // COLOR AS WELL
-        pcPaddle = new Paddle(WINDOW_WIDTH - 40, WINDOW_HEIGHT / 2,
-                pcPaddleHeight,
-                pcPaddleSpeed,
-                pcPaddleColor);
+        // gameBall = new Ball(300, 200, 
+        //         globalConfig.getCx(), 
+        //         globalConfig.getCy(), 
+        //         globalConfig.getBallSpeed(), 
+        //         globalConfig.getBallColor(), 10
+        // );
+
+        // futureBall = new Ball(gameBall);
+        // userPaddle = new Paddle(10, 200, 
+        //         globalConfig.getUserPaddleHeight(), 
+        //         globalConfig.getUserPaddleSpeed(), 
+        //         globalConfig.getUserPaddleColor()
+        // );
+
+        // pcPaddle = new Paddle(WINDOW_WIDTH - 40, WINDOW_HEIGHT / 2,
+        //         globalConfig.getPcPaddleHeight(),
+        //         globalConfig.getPcPaddleSpeed(),
+        //         globalConfig.getPcPaddleColor());
+
+        intGame();
 
         // reset futureBall
         bounceCount = 0;
@@ -324,6 +437,13 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         pcGotToTarget = false; // might be useful in future
         pcAccidentalMiss = false;
 
+        userMouseY = WINDOW_HEIGHT/2 - globalConfig.getUserPaddleHeight()/2;
+        pcMouseY = WINDOW_HEIGHT/2 - globalConfig.getPcPaddleHeight()/2;
+        upKeyPressed = false;
+        downKeyPressed = false;
+        wPressed = false;
+        sPressed = false;
+        paddleKeyTimer.stop();
     }
 
     public void outXBound(Ball gameBall) {
@@ -347,23 +467,69 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
     public void keyPressed(KeyEvent e) {
         int keycode = e.getKeyCode();
 
-        if (keycode == KeyEvent.VK_UP || keycode == KeyEvent.VK_W) {
-            if (!upKeyPressed) {
-                upKeyPressed = true;
-                // System.out.println("key is supposed to be moving 03");
-                if (!paddleKeyTimer.isRunning()) {
-                    paddleKeyTimer.start(); // Start the timer only once
+        if(!globalConfig.getMultiplayer())
+        {
+            if (keycode == KeyEvent.VK_UP || keycode == KeyEvent.VK_W) {
+                if (!upKeyPressed) {
+                    upKeyPressed = true;
+                    //System.out.println("key is supposed to be moving 03");
+                    if (!paddleKeyTimer.isRunning()) {
+                        paddleKeyTimer.start(); // Start the timer only once
+                    }
+                }
+            }
 
+            if (keycode == KeyEvent.VK_DOWN || keycode == KeyEvent.VK_S) {
+                if (!downKeyPressed) {
+                    downKeyPressed = true;
+                    //System.out.println("key is supposed to be moving 04");
+                    if (!paddleKeyTimer.isRunning()) {
+                        paddleKeyTimer.start(); // Start the timer only once
+                    }
                 }
             }
         }
+        else
+        {
+            if (keycode == KeyEvent.VK_UP) {
+                if (!upKeyPressed) {
+                    upKeyPressed = true;
+                    //System.out.println("key is supposed to be moving 03");
+                    if (!paddleKeyTimer.isRunning()) {
+                        paddleKeyTimer.start(); // Start the timer only once
+                        
+                    }
+                }
+            }
+            if (keycode == KeyEvent.VK_W) {
+                if (!wPressed) {
+                    wPressed = true;
+                    //System.out.println("key is supposed to be moving 03");
+                    if (!paddleKeyTimer.isRunning()) {
+                        paddleKeyTimer.start(); // Start the timer only once
+                        
+                    }
+                }
+            }
 
-        if (keycode == KeyEvent.VK_DOWN || keycode == KeyEvent.VK_S) {
-            if (!downKeyPressed) {
-                downKeyPressed = true;
-                // System.out.println("key is supposed to be moving 04");
-                if (!paddleKeyTimer.isRunning()) {
-                    paddleKeyTimer.start(); // Start the timer only once
+            if (keycode == KeyEvent.VK_DOWN) {
+                if (!downKeyPressed) {
+                    downKeyPressed = true;
+                    //System.out.println("key is supposed to be moving 04");
+                    if (!paddleKeyTimer.isRunning()) {
+                        paddleKeyTimer.start(); // Start the timer only once
+                    }
+                }
+            }
+
+            if (keycode == KeyEvent.VK_S) {
+                if (!sPressed) {
+                    sPressed = true;
+                    //System.out.println("key is supposed to be moving 03");
+                    if (!paddleKeyTimer.isRunning()) {
+                        paddleKeyTimer.start(); // Start the timer only once
+                        
+                    }
                 }
             }
         }
@@ -371,22 +537,48 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
 
     @Override
     public void keyReleased(KeyEvent e) {
-        int keyCode = e.getKeyCode();
+         int keyCode = e.getKeyCode();
+        
+        if(!globalConfig.getMultiplayer())
+        {
+            if (keyCode == KeyEvent.VK_UP  || keyCode == KeyEvent.VK_W ) {
+                upKeyPressed = false;  // Stop printing when UP key is released
+                //System.out.println("key is supposed to be moving 05");
+                //classical debug technique
+            }
 
-        if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
-            upKeyPressed = false; // Stop printing when UP key is released
-            // System.out.println("key is supposed to be moving 05");
-            // classical debug technique
+            if (keyCode == KeyEvent.VK_DOWN  || keyCode == KeyEvent.VK_S) {
+                downKeyPressed = false;  // Stop printing when DOWN key is released
+                //System.out.println("key is supposed to be moving 06");
+            }
+
+            // Stop the timer when no keys are pressed
+            if (!upKeyPressed && !downKeyPressed) {
+                paddleKeyTimer.stop();
+            }
         }
+        else
+        {
+            if (keyCode == KeyEvent.VK_UP) {
+                upKeyPressed = false;
+            }
 
-        if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
-            downKeyPressed = false; // Stop printing when DOWN key is released
-            // System.out.println("key is supposed to be moving 06");
-        }
+            if (keyCode == KeyEvent.VK_W) {
+                wPressed = false;
+            }
 
-        // Stop the timer when no keys are pressed
-        if (!upKeyPressed && !downKeyPressed) {
-            paddleKeyTimer.stop();
+            if (keyCode == KeyEvent.VK_DOWN) {
+                downKeyPressed = false;
+            }
+
+            if (keyCode == KeyEvent.VK_S) {
+                sPressed = false;
+            }
+
+            if (!upKeyPressed && !downKeyPressed && !wPressed && !sPressed) {
+                paddleKeyTimer.stop();
+            }
+
         }
     }
 

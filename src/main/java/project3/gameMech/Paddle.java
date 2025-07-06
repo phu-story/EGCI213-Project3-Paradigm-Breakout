@@ -77,8 +77,9 @@ class Paddle {
 
             if (centerY < moveToY) {
                 y += speed;
+                if (y > PongGame.WINDOW_HEIGHT - height - 23)
+                    y = PongGame.WINDOW_HEIGHT - height - 23;
             }
-
         }
     }
 

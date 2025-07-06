@@ -67,6 +67,7 @@ public class gameRender extends JFrame {
             }
         });
 
+        
         // For dubug and test, feel free to comment it
         // String message = "Input level: " + difficultyLevel + 
         //                  "\nVolume Level: " + volumeLevel;
