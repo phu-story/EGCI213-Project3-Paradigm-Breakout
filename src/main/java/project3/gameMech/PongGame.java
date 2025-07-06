@@ -1,6 +1,16 @@
 package project3.gameMech;
 
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import project3.gameRender;
 
@@ -31,7 +41,6 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
      * useful
      * in increaseSpeed() method, aside from that, it has no use, for now
      */
-
     private int cx = 4, cy = 4, ballSpeed = 4; // to make it harder, increase all THREE variables
     private int userPaddleSpeed = 3;
     private int pcPaddleSpeed = 3;
@@ -48,10 +57,26 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
     private int oscillateTowards;
 
     private Timer paddleKeyTimer;
+
     private boolean upKeyPressed = false, downKeyPressed = false;
 
+    static final String PATH = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
+    private static Image background;
+    private static String backgroundName = "BG1";
+    private static int currvolumeLevel = 50;
+
+    // settings
+    private int difficultyLevel;
+    private int winPoint;
+
     public PongGame(int difficultyLevel, int winPoint) {
-        this.winpoint = winPoint;
+
+        this.difficultyLevel = difficultyLevel;
+        this.winPoint = winPoint;
+
+        SoundPlayer.stop();
+        SoundPlayer.playBackgroundSound(PATH + "backgroundsound.wav");
+
         // Adjust difficulty level by user's config
         if (difficultyLevel > 1) {
             cx = 4 + difficultyLevel;
@@ -61,18 +86,17 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
             pcPaddleSpeed = 3 + difficultyLevel;
         }
 
-        gameBall = new Ball(300, 200, cx, cy, ballSpeed, ballColor, 10); // SPEED IS 3
+        gameBall = new Ball(300, 200, cx, cy, ballSpeed, ballColor, 40, 30); // SPEED IS 3
         futureBall = new Ball(gameBall);
         userPaddle = new Paddle(10, WINDOW_HEIGHT / 2, userPaddleHeight, userPaddleSpeed, userPaddleColor); // SPEED CAN
                                                                                                             // CHANGE
                                                                                                             // HERE,
                                                                                                             // COLOR AS
                                                                                                             // WELL
-        pcPaddle = new Paddle(WINDOW_WIDTH - 40, WINDOW_HEIGHT / 2, // x,y cord of starting position
-                pcPaddleHeight, // Paddle's height
-                pcPaddleSpeed, // Moveable unit per frame
-                pcPaddleColor // paddle color
-        );
+        pcPaddle = new Paddle(WINDOW_WIDTH - 40, WINDOW_HEIGHT / 2,
+                pcPaddleHeight,
+                pcPaddleSpeed,
+                pcPaddleColor);
 
         userMouseY = 0;
 
@@ -80,6 +104,14 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         pcScore = 0;
         bounceCount = 0;
 
+        userScore = 0;
+        pcScore = 0;
+        bounceCount = 0;
+
+        detectedCollideY = -1;
+        pcGotToTarget = false;
+        oscillateTowards = 0;
+        pcAccidentalMiss = false;
         detectedCollideY = -1;
         pcGotToTarget = false;
         oscillateTowards = 0;
@@ -103,23 +135,70 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         });
     }
 
+    public static void setBackgroundName(String n) {
+        backgroundName = n;
+
+        try {
+            background = new ImageIcon(PATH + backgroundName + ".png").getImage();
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public static String getBackgroundName() {
+        return backgroundName;
+    }
+
     // To-do: Further Ui work
     @Override
     public void paintComponent(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
+        super.paintComponent(g);
+        // set background
+        background = new ImageIcon(PATH + backgroundName + ".png").getImage();
+        g.drawImage(background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, this);
+
+        // game objects
         gameBall.paint(g);
-        // futureBall.paint(g); //supposed to be invisible, added paint to make dev sees
-        // if mechanic works or not
-
         userPaddle.paint(g);
         pcPaddle.paint(g);
+        // label
+        String user = String.valueOf(userScore); // score
+        String pc = String.valueOf(pcScore);
+        int boxSize = 100 + 80 + (20 * user.toCharArray().length) + 10 + 70 + (20 * pc.toCharArray().length); // calc
+                                                                                                              // header
+                                                                                                              // width
+        int x = (800 - boxSize) / 2, y = 20;
 
-        g.setColor(Color.WHITE); // SCORE BOARD CAN ALSO BE CUSTOMIZED HERE
-        String scoreBoard = "Score - user [ " + userScore + " ] PC [ " + pcScore + " ]";
-        g.drawString(scoreBoard, 300, 20);
+        Image scoreLabel = new ImageIcon(PATH + "score.png").getImage();
+        g.drawImage(scoreLabel, x, y, 100, 60, this);
+        x += 100;
 
+        Image userLabel = new ImageIcon(PATH + "user.png").getImage();
+        g.drawImage(userLabel, x, y, 80, 60, this);
+        x += 80;
+        y += 5;
+
+        for (char num : user.toCharArray()) {
+            Image numImage = new ImageIcon(PATH + num + ".png").getImage();
+            g.drawImage(numImage, x, y, 40, 40, this);
+            x += 20;
+        }
+        x += 10;
+        y -= 5;
+
+        Image pcLabel = new ImageIcon(PATH + "PC.png").getImage();
+        g.drawImage(pcLabel, x, y, 80, 60, this);
+        x += 70;
+        y += 5;
+
+        // score
+        for (char num : pc.toCharArray()) {
+            Image numImage = new ImageIcon(PATH + num + ".png").getImage();
+            g.drawImage(numImage, x, y, 40, 40, this);
+            x += 20;
+        }
     }
 
     public void gameLogic() {
@@ -154,21 +233,15 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
         // ALWAYS MOVES TOWARD THE BALL
         // We can make it harder though
 
-        if (Math.abs((pcPaddle.getY() + pcPaddle.getHeight() / 2) - detectedCollideY) < 1 && !pcGotToTarget) // Accuracy
-                                                                                                             // of
-                                                                                                             // paddle
-                                                                                                             // placement
-        {
+        if (Math.abs((pcPaddle.getY() + pcPaddle.getHeight() / 2) - detectedCollideY) < 3 && !pcGotToTarget) {
             pcGotToTarget = true;
             System.out.println("pc paddle got to designated target"); // for better ai movement
 
         }
 
         if (!pcGotToTarget) {
-            // This should fix PC's paddle fall out off screen [10, 500]
-            int yAxis_MoveLimit = Math.max(10, Math.min(WINDOW_HEIGHT - 10, detectedCollideY));
-            pcPaddle.moveToward(yAxis_MoveLimit); // advance pc detection, for sees where the ball is going, HARDER GAME
-                                                  // MODE
+            pcPaddle.moveToward(detectedCollideY); // advance pc detection, for sees where the ball is going, HARDER
+                                                   // GAME MODE
         } else {
             if (pcPaddle.getCenterY() > detectedCollideY + 10) {
                 oscillateTowards = 0;
@@ -181,19 +254,25 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
 
         if (userPaddle.checkCollision(gameBall)) {
             gameBall.reverseX();
-            gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH + 1);
+            gameBall.setX(userPaddle.getX() + (Paddle.PADDLE_WIDTH - 6));
+
             bounceCount++;
+
+            SoundPlayer.playsound(PATH + "hitsound.wav");
         }
 
         if (pcPaddle.checkCollision(gameBall)) {
             gameBall.reverseX();
-            gameBall.setX(pcPaddle.getX() - 10); // make it so that some part of the ball still stuck inside the paddle
-                                                 // make it more.. collision realistic?
+            gameBall.setX(pcPaddle.getX() - (gameBall.getWidth() - 5)); // make it so that some part of the ball still
+                                                                        // stuck inside the paddle
+            // make it more.. collision realistic?
             futureBall = new Ball(gameBall); // REMOVE TS PART FOR SIMPLER AI
             // reset the detected collision point
             detectedCollideY = -1;
             pcGotToTarget = false; // TO THIS
             bounceCount++;
+
+            SoundPlayer.playsound(PATH + "hitsound.wav");
 
             if ((int) (Math.random() * 3) == 0) {
                 pcAccidentalMiss = true; // PC ACCIDENTAL MISS
@@ -230,7 +309,7 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
             e.printStackTrace();
         }
 
-        gameBall = new Ball(300, 200, cx, cy, ballSpeed, ballColor, 10); // SPEED IS 3
+        gameBall = new Ball(300, 200, cx, cy, ballSpeed, ballColor, 40, 30); // SPEED IS 3
         futureBall = new Ball(gameBall);
         userPaddle = new Paddle(10, 200, userPaddleHeight, userPaddleSpeed, userPaddleColor); // SPEED CAN CHANGE HERE,
                                                                                               // COLOR AS WELL
@@ -247,7 +326,6 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
 
     }
 
-    // Check if ball hit wall Score counting
     public void outXBound(Ball gameBall) {
         if (gameBall.getX() < 0) // condition checking whether lose or not
         {
@@ -315,6 +393,18 @@ public class PongGame extends JPanel implements MouseMotionListener, KeyListener
     @Override
     public void keyTyped(KeyEvent e) {
         // Optionally handle key typed events if needed
+    }
+
+    public void stop() {
+        if (paddleKeyTimer != null && paddleKeyTimer.isRunning()) {
+            paddleKeyTimer.stop();
+        }
+        SoundPlayer.stop();
+
+        gameBall = null; // clean
+        futureBall = null;
+        userPaddle = null;
+        pcPaddle = null;
     }
 
 }
