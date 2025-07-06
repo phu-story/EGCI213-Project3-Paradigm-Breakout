@@ -2,6 +2,8 @@ package project3.gameMech;
 
 import javax.swing.*;
 
+import project3.MainApplication;
+
 // import project3.gameRender;
 
 import java.awt.*;
@@ -43,7 +45,8 @@ public class PongGame extends GameMode {
     // private final int userPaddleHeight = 80;
     // private final int pcPaddleHeight = 80;
 
-    private int userScore, pcScore, bounceCount, intUserLoc2, intPcLoc2;
+    private int userScore, pcScore, bounceCount;
+    // private int intUserLoc2, intPcLoc2;              // Suppress warning not using varaible
     private int detectedCollideY;
     private boolean pcGotToTarget;
     private int oscillateTowards;
@@ -61,14 +64,15 @@ public class PongGame extends GameMode {
     static final String PATH = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
     private static Image background;
     private static String backgroundName = "BG1";
-    private static int currvolumeLevel = 50;
+    // private static int currvolumeLevel = 50;        // Suppress warning not using varaible
 
     // settings
-    private int difficultyLevel;
-    private int winPoint;
+    // private int difficultyLevel;                    // Suppress warning not using varaible
+    // private int winPoint;                           // Suppress warning not using varaible
 
-    public PongGame(int difficultyLevel, int winPoint) {
+    public PongGame(int difficultyLevel, int winPoint, int modeSelected) {
         this.winpoint = winPoint;
+        globalConfig.gameModeSetter(modeSelected, difficultyLevel);
 
         SoundPlayer.stop();
         SoundPlayer.playBackgroundSound(PATH + "backgroundsound.wav");
@@ -283,7 +287,6 @@ public class PongGame extends GameMode {
             if (Math.abs((pcPaddle.getY() + pcPaddle.getHeight() / 2) - detectedCollideY) < 1 && !pcGotToTarget) {
                 pcGotToTarget = true;
                 System.out.println("pc paddle got to designated target"); // for better ai movement
-
             }
 
             if (!pcGotToTarget) {
@@ -315,7 +318,7 @@ public class PongGame extends GameMode {
 
             if (userPaddle.checkCollision(gameBall)) {
                 gameBall.reverseX();
-                gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH + 1);
+                gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH - 3);
                 if (globalConfig.getDynamicBallSpeed()) {
                     bounceCount++;
                 }
@@ -325,8 +328,8 @@ public class PongGame extends GameMode {
 
             if (pcPaddle.checkCollision(gameBall)) {
                 gameBall.reverseX();
-                gameBall.setX(pcPaddle.getX() - 10); // make it so that some part of the ball still stuck inside the
-                                                     // paddle
+                // 36 is fine-tuned, can't scale
+                gameBall.setX(pcPaddle.getX() - 36); // make it so that some part of the ball still stuck inside the paddle
                                                      // make it more.. collision realistic?
                 futureBall = new Ball(gameBall); // REMOVE TS PART FOR SIMPLER AI
                 // reset the detected collision point
@@ -466,6 +469,18 @@ public class PongGame extends GameMode {
     @Override
     public void keyPressed(KeyEvent e) {
         int keycode = e.getKeyCode();
+
+        // if (keycode == KeyEvent.VK_ESCAPE) {
+        //     int exit = JOptionPane.showConfirmDialog(this, "Are you sure to return to main menu?", "Exit Game", JOptionPane.YES_NO_OPTION);
+        //     if (exit == JOptionPane.YES_OPTION) {
+        //         gameBall = null;
+        //         userPaddle = null;
+        //         pcPaddle = null;
+
+        //         paddleKeyTimer.stop();;
+        //         super.removeAll();
+        //     }
+        // }
 
         if(!globalConfig.getMultiplayer())
         {

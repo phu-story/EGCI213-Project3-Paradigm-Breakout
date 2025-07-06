@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import project3.gameMech.PongGame;
@@ -21,7 +22,7 @@ public class gameRender extends JFrame {
     private static PongGame game;
     private static Timer gameTimer;
 
-    public static JPanel renderPlayable(int volumeLevel, int difficultyLevel, int winPoint, MainApplication mainFrame) {
+    public static JPanel renderPlayable(int volumeLevel, int difficultyLevel, int winPoint, MainApplication mainFrame, int modeSelected) {
         // Stop any existing game first
         stopCurrentGame();
 
@@ -32,7 +33,7 @@ public class gameRender extends JFrame {
 
         //set volume before game start
         SoundPlayer.setVolume(volumeLevel);
-        game = new PongGame(difficultyLevel, winPoint);
+        game = new PongGame(difficultyLevel, winPoint, modeSelected);
         playArea.add(game);
 
         gameTimer = new Timer(DELAY, new ActionListener() {
@@ -45,26 +46,32 @@ public class gameRender extends JFrame {
             }
         });
 
-        // Press ESC to exit
-        playArea.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    int result = JOptionPane.showConfirmDialog(playArea, "Are you sure you want to exit?", "Confirm Exit", JOptionPane.YES_NO_OPTION);
-                    if (result == JOptionPane.YES_OPTION) {
-                        //stop everything!!!!!
-                        stopCurrentGame();
-                        //bak to main menu
-                        Container contentPane = mainFrame.getContentPane();
-                        contentPane.removeAll();
-                        contentPane.add(mainFrame.getMainMenu());
-                        contentPane.revalidate();
-                        contentPane.repaint();
+        // playArea.addNotify();
+        // playArea.requestFocusInWindow();
 
-                        playArea.removeKeyListener(this);
+        // Press ESC to exit
+        SwingUtilities.invokeLater(() -> {
+            playArea.requestFocusInWindow();
+            playArea.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                        gameTimer.stop();
+                        int result = JOptionPane.showConfirmDialog(playArea, "Do you want to return to main menu?", "Confirm Exit", JOptionPane.YES_NO_OPTION);
+                        if (result == JOptionPane.YES_OPTION) {
+                            stopCurrentGame();
+
+                            Container contentPane = mainFrame.getContentPane();
+                            contentPane.removeAll();
+                            contentPane.add(mainFrame.getMainMenu());
+                            contentPane.revalidate();
+                            contentPane.repaint();
+                        } else {
+                            gameTimer.restart();
+                        }
                     }
                 }
-            }
+            });
         });
 
         

@@ -225,10 +225,9 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
   }
 
   public GameMode() {
-    gameModeSetter();
   }
 
-  public void gameModeSetter() {
+  public void gameModeSetter(int inMode, int diffLevel) {
     /*
     *  setDynamicBallSpeed(true);
     *  setBetterAi(true); //multiplayer disables this
@@ -250,6 +249,43 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     *  setIntUserLoc(0);
     */
 
+    switch (inMode) {
+      case 0:
+        setTotalBallspeed(3 + diffLevel);
+        break;
+      case 1:
+        cryBaby();
+        break;
+      case 2:
+        casual();
+        break;
+      case 3:
+        intimidating();
+        break;
+      case 4:
+        meVsSkynet();
+        break;
+      case 5:
+        deathwish();
+        break;
+      case 6:
+        jail();
+        break;
+      case 7:
+        pingPongDiplomacy();
+        break;
+      case 8:
+        DPRKAthelete();
+        break;
+      case 9:
+        multiCasual();
+        break;
+      case 10:
+        multiIntimidating();
+        break;
+      default:
+        break;
+    }
     // userChinaWall();
     // cryBaby();
     // casual();
@@ -257,7 +293,7 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     // meVsSkynet();
     // deathwish();
     // jail();
-    multiCasual();
+    // multiCasual();
     // pingPongDiplomacy();
     // multiIntimidating();
     // DPRKAthelete();

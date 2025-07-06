@@ -41,7 +41,7 @@ public class MainApplication extends JFrame {
     static final String PATH = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
     private static final String FILE_LOGO = PATH + "Logo.png";
     private static int volumeLevel = 50;
-    private static int difficultyLevel, winPoint;
+    private static int difficultyLevel = 1, winPoint, modeSelected = 0;
 
     // Create frame
     public MainApplication() {
@@ -58,18 +58,14 @@ public class MainApplication extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    int exit = JOptionPane.showConfirmDialog(MainApplication.this, "Exit the game and return to the Main Menu?", "Exit Game", JOptionPane.YES_NO_OPTION);
+                    int exit = JOptionPane.showConfirmDialog(MainApplication.this, "Are you sure to exit?", "Exit Game", JOptionPane.YES_NO_OPTION);
                     if (exit == JOptionPane.YES_OPTION) {
-                        gameRender.stopCurrentGame(); //stop everything
-                        contentPane.removeAll(); //clear
-                        contentPane.add(getMainMenu());
-                        contentPane.revalidate();
-                        contentPane.repaint();
+                        System.exit(0);
                     }
 
                 } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     contentPane.removeAll();
-                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, winPoint, currentFrame));
+                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, winPoint, currentFrame, modeSelected));
                     contentPane.revalidate();
                     contentPane.repaint();
                 }
@@ -101,7 +97,7 @@ public class MainApplication extends JFrame {
         SoundPlayer.setVolume(volumeLevel);
     }
 
-    // Using in gameRender to come back to main menu
+    // Using in gameRender to come back to main menu 
     public JPanel getMainMenu() {
         contentPane.removeAll();
         contentPane.revalidate();
@@ -171,7 +167,7 @@ public class MainApplication extends JFrame {
 
                     // Remove main menu Ui & Render gameplay
                     contentPane.removeAll();
-                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, winPoint, currentFrame));
+                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, winPoint, currentFrame, modeSelected));
 
                     contentPane.revalidate();
                     contentPane.repaint();
@@ -226,7 +222,7 @@ public class MainApplication extends JFrame {
                 settingsPanel.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
                 // Left: JList in a scroll pane
-                String[] configOption = {"How to play", "I don't know what this should be", "Sound", "Background Image", "Credits"};
+                String[] configOption = {"How to play", "Game Mode", "Sound", "Background Image", "Credits"};
                 JList<String> displayList = new JList<>(configOption);
                 JScrollPane listScrollPane = new JScrollPane(displayList);
 
@@ -294,14 +290,107 @@ public class MainApplication extends JFrame {
 
     // Helper method to handle JList in option pane, subset of settings
     public JPanel gameplayPanel() {
-        String message = "I want to kill myself";
-        JTextArea textArea = new JTextArea(message);
-        textArea.setEditable(false);
-        textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JRadioButton[] toggleButton = new JRadioButton[11];
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(textArea);
-        return panel;
+        // Wrapping note (only when necessary)
+        JTextArea note = new JTextArea("Selecting game modes will override selected difficulty.");
+        note.setEditable(false);
+        note.setLineWrap(true);
+        note.setWrapStyleWord(true); // wrap at character, not word
+        note.setOpaque(false);
+        note.setFocusable(false);
+        note.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        note.setMaximumSize(new Dimension(Integer.MAX_VALUE, note.getPreferredSize().height));
+        toggleButton[0] = new JRadioButton("None");
+
+        // --- SINGLEPLAYER SECTION ---
+        toggleButton[1] = new JRadioButton("Cry Baby");
+        toggleButton[2] = new JRadioButton("Casual");
+        toggleButton[3] = new JRadioButton("Intimidating");
+        toggleButton[4] = new JRadioButton("You Vs Skynet");
+        toggleButton[5] = new JRadioButton("Deathwish");
+        toggleButton[6] = new JRadioButton("Practice");
+        toggleButton[7] = new JRadioButton("Pingpong Diplomacy");
+        toggleButton[8] = new JRadioButton("DPRK Athlete");
+
+        ButtonGroup buttonGroup = new ButtonGroup();
+        JPanel singlePanel = new JPanel();
+        singlePanel.setLayout(new BoxLayout(singlePanel, BoxLayout.Y_AXIS));
+        singlePanel.setBorder(BorderFactory.createTitledBorder("Single Player Mode"));
+
+        for (int i = 0; i < 9; i++) {
+            if (modeSelected == i) {
+                toggleButton[i].setSelected(true);
+            }
+
+            buttonGroup.add(toggleButton[i]);
+            singlePanel.add(toggleButton[i]);
+        }
+
+        // --- MULTIPLAYER SECTION ---
+        toggleButton[9] = new JRadioButton("Casual");
+        toggleButton[10] = new JRadioButton("Intermediate");
+
+        JPanel multiPanel = new JPanel();
+        multiPanel.setLayout(new BoxLayout(multiPanel, BoxLayout.Y_AXIS));
+        multiPanel.setBorder(BorderFactory.createTitledBorder("Multiplayer Mode"));
+
+        for (int i = 9; i <= 10; i++) {
+            if (modeSelected == i) {
+                toggleButton[i].setSelected(true);
+            }
+
+            buttonGroup.add(toggleButton[i]);
+            multiPanel.add(toggleButton[i]);
+        }
+
+        // --- CENTER PANEL with 2 sections side by side ---
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 0, 0));
+        centerPanel.add(singlePanel);
+        centerPanel.add(multiPanel);
+
+        // --- Wrap everything in a container panel ---
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.add(note);
+        
+        JPanel upperPanel = new JPanel(new GridLayout(1, 1, 0, 0));
+        upperPanel.add(toggleButton[0]);
+        contentPanel.add(upperPanel);
+
+        contentPanel.add(Box.createVerticalStrut(10));
+        contentPanel.add(centerPanel);
+
+        // --- Make scrollable only in Y-axis ---
+        JScrollPane scrollPane = new JScrollPane(
+            contentPanel,
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
+        scrollPane.setPreferredSize(new Dimension(600, 400));
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16); // smooth scrolling
+        scrollPane.setBorder(null);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        for (int i = 0; i < toggleButton.length; i++) {
+            final int index = i;
+
+            toggleButton[i].addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (toggleButton[index].isSelected()) {
+                        modeSelected = index; 
+                        System.out.println(toggleButton[index].getText() + " is selected (" + modeSelected + ")");
+                    } else {
+                        System.out.println(toggleButton[index].getText() + " is unselected (OFF)");
+                    }
+                }
+            });
+        }
+
+        return mainPanel;
     } // End of gameplayPanel
 
     // Helper method to handle JList in option pane, subset of settings
