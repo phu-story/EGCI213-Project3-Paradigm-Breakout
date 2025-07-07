@@ -1,23 +1,26 @@
 package project3.gameMech;
 
-import javax.swing.*;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 import project3.MainApplication;
 
-// import project3.gameRender;
-
-import java.awt.*;
-import java.awt.event.*;
-
 public class PongGame extends GameMode {
+
     // Designed dimension 640 x 480
     // Desired dimension 800 x 600
     static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
     private Ball gameBall, futureBall;
     /**
-     * TRON LEGACY TYPE, nah, in order to make pc paddle smarter
-     * we can make an invisible ball that foresees normal ball action and have
-     * pc paddle responds to that ball instead
+     * TRON LEGACY TYPE, nah, in order to make pc paddle smarter we can make an
+     * invisible ball that foresees normal ball action and have pc paddle
+     * responds to that ball instead
      */
     private Paddle userPaddle, pcPaddle;
     private int userMouseY, pcMouseY;
@@ -32,7 +35,6 @@ public class PongGame extends GameMode {
      * useful
      * in increaseSpeed() method, aside from that, it has no use, for now
      */
-
     GameMode globalConfig = new GameMode();
 
     // private int cx = 4, cy = 4, ballSpeed = 4; // to make it harder, increase all
@@ -44,10 +46,8 @@ public class PongGame extends GameMode {
     // private final Color pcPaddleColor = Color.RED, userPaddleColor = Color.BLUE,
     // ballColor = Color.YELLOW;
     // private boolean pcAccidentalMiss;
-
     // private final int userPaddleHeight = 80;
     // private final int pcPaddleHeight = 80;
-
     private int userScore, pcScore, bounceCount;
     // private int intUserLoc2, intPcLoc2; // Suppress warning not using varaible
     private int detectedCollideY;
@@ -74,7 +74,6 @@ public class PongGame extends GameMode {
     // settings
     // private int difficultyLevel; // Suppress warning not using varaible
     // private int winPoint; // Suppress warning not using varaible
-
     public PongGame(int difficultyLevel, int winPoint, int modeSelected, MainApplication mainFrame) {
         this.winpoint = winPoint;
         this.mainFrame = mainFrame;
@@ -114,7 +113,6 @@ public class PongGame extends GameMode {
             // paddleKeyTimer = new Timer(globalConfig.getRefreshRate(), e -> {
             //
             // });
-
             if (!globalConfig.getMultiplayer()) {
                 if (upKeyPressed && userPaddle.getY() > 0) {
                     userMouseY -= globalConfig.getUserPaddleSpeed();
@@ -187,9 +185,9 @@ public class PongGame extends GameMode {
                     globalConfig.getUserPaddleSpeed(),
                     globalConfig.getUserPaddleColor());
             pcPaddle = new Paddle(WINDOW_WIDTH - 40, (WINDOW_HEIGHT / 2) - globalConfig.getPcPaddleHeight(), // x,y cord
-                                                                                                             // of
-                                                                                                             // starting
-                                                                                                             // position
+                    // of
+                    // starting
+                    // position
                     globalConfig.getPcPaddleHeight(), // Paddle's height
                     globalConfig.getPcPaddleSpeed(), // Moveable unit per frame
                     globalConfig.getPcPaddleColor() // paddle color
@@ -204,10 +202,10 @@ public class PongGame extends GameMode {
                     globalConfig.getUserPaddleColor());
 
             pcPaddle = new Paddle(WINDOW_WIDTH - 40, (WINDOW_HEIGHT / 2) - (globalConfig.getPcPaddleHeight() / 2), // x,y
-                                                                                                                   // cord
-                                                                                                                   // of
-                                                                                                                   // starting
-                                                                                                                   // position
+                    // cord
+                    // of
+                    // starting
+                    // position
                     globalConfig.getPcPaddleHeight(), // Paddle's height
                     globalConfig.getPcPaddleSpeed(), // Moveable unit per frame
                     globalConfig.getPcPaddleColor() // paddle color
@@ -232,38 +230,76 @@ public class PongGame extends GameMode {
         // label
         String user = String.valueOf(userScore); // score
         String pc = String.valueOf(pcScore);
-        int boxSize = 100 + 80 + (20 * user.toCharArray().length) + 10 + 70 + (20 * pc.toCharArray().length); // calc
-                                                                                                              // header
-                                                                                                              // width
-        int x = (800 - boxSize) / 2, y = 20;
 
-        Image scoreLabel = new ImageIcon(PATH + "score.png").getImage();
-        g.drawImage(scoreLabel, x, y, 100, 60, this);
-        x += 100;
+        if (globalConfig.getMultiplayer()) {
 
-        Image userLabel = new ImageIcon(PATH + "user.png").getImage();
-        g.drawImage(userLabel, x, y, 80, 60, this);
-        x += 80;
-        y += 5;
+            int boxSize = 120 + 140 + (20 * user.toCharArray().length) + 40 + 140 + (20 * pc.toCharArray().length); // calc
+            // header
+            // width
+            int x = (800 - boxSize) / 2, y = 20;
 
-        for (char num : user.toCharArray()) {
-            Image numImage = new ImageIcon(PATH + num + ".png").getImage();
-            g.drawImage(numImage, x, y, 40, 40, this);
-            x += 20;
-        }
-        x += 10;
-        y -= 5;
+            Image scoreLabel = new ImageIcon(PATH + "score.png").getImage();
+            g.drawImage(scoreLabel, x, y, 100, 60, this);
+            x += 120;
+            y -= 10;
 
-        Image pcLabel = new ImageIcon(PATH + "PC.png").getImage();
-        g.drawImage(pcLabel, x, y, 80, 60, this);
-        x += 70;
-        y += 5;
+            Image player1Label = new ImageIcon(PATH + "player1.png").getImage();
+            g.drawImage(player1Label, x, y, 120, 80, this);
+            x += 140;
+            y += 15;
 
-        // score
-        for (char num : pc.toCharArray()) {
-            Image numImage = new ImageIcon(PATH + num + ".png").getImage();
-            g.drawImage(numImage, x, y, 40, 40, this);
-            x += 20;
+            for (char num : user.toCharArray()) {
+                Image numImage = new ImageIcon(PATH + num + ".png").getImage();
+                g.drawImage(numImage, x, y, 40, 40, this);
+                x += 20;
+            }
+            x += 40;
+            y -= 15;
+
+            Image player2Label = new ImageIcon(PATH + "player2.png").getImage();
+            g.drawImage(player2Label, x, y, 120, 80, this);
+            x += 140;
+            y += 15;
+
+            for (char num : pc.toCharArray()) {
+                Image numImage = new ImageIcon(PATH + num + ".png").getImage();
+                g.drawImage(numImage, x, y, 40, 40, this);
+                x += 20;
+            }
+        } else {
+            int boxSize = 100 + 80 + (20 * user.toCharArray().length) + 10 + 70 + (20 * pc.toCharArray().length); // calc
+            // header
+            // width
+            int x = (800 - boxSize) / 2, y = 20;
+
+            Image scoreLabel = new ImageIcon(PATH + "score.png").getImage();
+            g.drawImage(scoreLabel, x, y, 100, 60, this);
+            x += 100;
+
+            Image userLabel = new ImageIcon(PATH + "user.png").getImage();
+            g.drawImage(userLabel, x, y, 80, 60, this);
+            x += 80;
+            y += 5;
+
+            for (char num : user.toCharArray()) {
+                Image numImage = new ImageIcon(PATH + num + ".png").getImage();
+                g.drawImage(numImage, x, y, 40, 40, this);
+                x += 20;
+            }
+            x += 10;
+            y -= 5;
+
+            Image pcLabel = new ImageIcon(PATH + "PC.png").getImage();
+            g.drawImage(pcLabel, x, y, 80, 60, this);
+            x += 70;
+            y += 5;
+
+            // score
+            for (char num : pc.toCharArray()) {
+                Image numImage = new ImageIcon(PATH + num + ".png").getImage();
+                g.drawImage(numImage, x, y, 40, 40, this);
+                x += 20;
+            }
         }
     }
 
@@ -313,7 +349,7 @@ public class PongGame extends GameMode {
             if (!pcGotToTarget) {
                 if (globalConfig.getBetterAi()) {
                     pcPaddle.moveToward(detectedCollideY); // advance pc detection, for sees where the ball is going,
-                                                           // HARDER GAME MODE
+                    // HARDER GAME MODE
                 } else {
                     if (globalConfig.getAcMissMode()) {
                         int missVar = 0;
@@ -351,8 +387,8 @@ public class PongGame extends GameMode {
                 gameBall.reverseX();
                 // 36 is fine-tuned, can't scale
                 gameBall.setX(pcPaddle.getX() - 36); // make it so that some part of the ball still stuck inside the
-                                                     // paddle
-                                                     // make it more.. collision realistic?
+                // paddle
+                // make it more.. collision realistic?
                 futureBall = new Ball(gameBall); // REMOVE TS PART FOR SIMPLER AI
                 // reset the detected collision point
                 detectedCollideY = -1;
@@ -395,8 +431,8 @@ public class PongGame extends GameMode {
             if (pcPaddle.checkCollision(gameBall)) {
                 gameBall.reverseX();
                 gameBall.setX(pcPaddle.getX() - 45); // make it so that some part of the ball still stuck inside the
-                                                     // paddle
-                                                     // make it more.. collision realistic?
+                // paddle
+                // make it more.. collision realistic?
                 // TO THIS
                 bounceCount++;
             }
@@ -441,19 +477,16 @@ public class PongGame extends GameMode {
         // globalConfig.getBallSpeed(),
         // globalConfig.getBallColor(), 10
         // );
-
         // futureBall = new Ball(gameBall);
         // userPaddle = new Paddle(10, 200,
         // globalConfig.getUserPaddleHeight(),
         // globalConfig.getUserPaddleSpeed(),
         // globalConfig.getUserPaddleColor()
         // );
-
         // pcPaddle = new Paddle(WINDOW_WIDTH - 40, WINDOW_HEIGHT / 2,
         // globalConfig.getPcPaddleHeight(),
         // globalConfig.getPcPaddleSpeed(),
         // globalConfig.getPcPaddleColor());
-
         intGame();
 
         // reset futureBall
@@ -476,19 +509,41 @@ public class PongGame extends GameMode {
         {
             pcScore++;
             if (winpoint > 0 && pcScore >= winpoint) {
-                JOptionPane.showMessageDialog(this, "Your Score: " + userScore + "\n PC Score: + " + pcScore,
+                if(globalConfig.getMultiplayer()){
+                    JOptionPane.showMessageDialog(this, "Player 1 Score: " + userScore + "\nPlayer 2 Score: + " + pcScore,
                         "Game Ended", JOptionPane.INFORMATION_MESSAGE);
-                returnToMainMenu();
+                    SoundPlayer.stop();
+                    returnToMainMenu();
                 return;
+                }
+                else {
+                    JOptionPane.showMessageDialog(this, "Your Score: " + userScore + "\nPC Score: + " + pcScore,
+                        "Game Ended", JOptionPane.INFORMATION_MESSAGE);
+                    SoundPlayer.stop();
+                    returnToMainMenu();
+                    return;
+
+                }
+                
             }
             reset();
         } else if (gameBall.getX() > WINDOW_WIDTH) {
             userScore++;
             if (winpoint > 0 && userScore >= winpoint) {
-                JOptionPane.showMessageDialog(this, "Your Score: " + userScore + "\n PC Score: + " + pcScore,
+                if(globalConfig.getMultiplayer()) {
+                    JOptionPane.showMessageDialog(this, "Player 1 Score: " + userScore + "\nPlayer 2 Score: + " + pcScore,
                         "Game Ended", JOptionPane.INFORMATION_MESSAGE);
-                returnToMainMenu();
-                return;
+                    SoundPlayer.stop();
+                    returnToMainMenu();
+                    return;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Your Score: " + userScore + "\nPC Score: + " + pcScore,
+                        "Game Ended", JOptionPane.INFORMATION_MESSAGE);
+                    SoundPlayer.stop();
+                    returnToMainMenu();
+                    return;
+                }
+                
             }
             reset();
         }
