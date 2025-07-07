@@ -371,14 +371,14 @@ public class PongGame extends GameMode {
 
             if (userPaddle.checkCollision(gameBall)) {
                 gameBall.reverseX();
-                gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH/2 + 5);
+                gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH/2 + 7);
                 bounceCount++;
 
             }
 
             if (pcPaddle.checkCollision(gameBall)) {
                 gameBall.reverseX();
-                gameBall.setX(pcPaddle.getX() - 45); // make it so that some part of the ball still stuck inside the
+                // gameBall.setX(pcPaddle.getX() - 40); // make it so that some part of the ball still stuck inside the
                                                      // paddle
                                                      // make it more.. collision realistic?
                 // TO THIS
@@ -489,6 +489,7 @@ public class PongGame extends GameMode {
             int exit = JOptionPane.showConfirmDialog(this, "Do you want to return to main menu?", "Exit Game", JOptionPane.YES_NO_OPTION);
             paddleKeyTimer.stop();
             if (exit == JOptionPane.YES_OPTION) {
+                SoundPlayer.stop();
                 gameBall = null;
                 userPaddle = null;
                 pcPaddle = null;

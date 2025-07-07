@@ -303,23 +303,31 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
   }
 
   public void cryBaby() {
-    setDynamicBallSpeed(false);
-    setBetterAi(false);
-    setAcMissMode(true);
+    // setDynamicBallSpeed(false);
+    // setBetterAi(false);
+    // setAcMissMode(true);
     // setOscillation(true); //if better AI is turned off, oscillation will not work
-    // anyway, so this line has no effect
-    setCryBabyChance(true);
+    // // anyway, so this line has no effect
+    // setCryBabyChance(true);
+
+    setTotalBallspeed(4);
+    setUserPaddleSpeed(5);
+    setPcPaddleSpeed(3);
 
   }
 
   public void casual() {
     // everything is set to default
+
+    setTotalBallspeed(4);
+    setUserPaddleSpeed(4);
+    setPcPaddleSpeed(4);
   }
 
   public void intimidating() {
-    setTotalBallspeed(3);
+    setTotalBallspeed(4);
     setUserPaddleSpeed(3);
-    setPcPaddleSpeed(3);
+    setPcPaddleSpeed(4);
     setOscillationFrequency(20);
     setPercentChance(6);
   }
