@@ -253,6 +253,10 @@ public class PongGame extends GameMode {
     }
 
     public void gameLogic() {
+        if(this.gameBall == null || this.userPaddle == null || this.pcPaddle == null) {
+            return;
+        }
+
         gameBall.moveBall();
         gameBall.bounceOffEdge(0, WINDOW_HEIGHT);
 
