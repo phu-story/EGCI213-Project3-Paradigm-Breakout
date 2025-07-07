@@ -253,6 +253,8 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
             // -- Single --
             case 0:
                 setTotalBallspeed(3 + diffLevel);
+                setUserPaddleSpeed(6 - diffLevel);
+                setPcPaddleSpeed(2 + diffLevel);
                 break;
             case 1:
                 cryBaby();
@@ -310,16 +312,22 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
         // anyway, so this line has no effect
         setCryBabyChance(true);
 
+        setTotalBallspeed(4);
+        setUserPaddleSpeed(5);
+        setPcPaddleSpeed(3);
     }
 
     public void casual() {
         // everything is set to default
+        setTotalBallspeed(4);
+        setUserPaddleSpeed(4);
+        setPcPaddleSpeed(4);
     }
 
     public void intimidating() {
-        setTotalBallspeed(3);
+        setTotalBallspeed(4);
         setUserPaddleSpeed(3);
-        setPcPaddleSpeed(3);
+        setPcPaddleSpeed(4);
         setOscillationFrequency(20);
         setPercentChance(6);
     }

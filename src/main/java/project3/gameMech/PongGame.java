@@ -498,6 +498,7 @@ public class PongGame extends GameMode {
     public void keyPressed(KeyEvent e) {
         int keycode = e.getKeyCode();
         if (keycode == KeyEvent.VK_ESCAPE) {
+            SoundPlayer.stop();
             int exit = JOptionPane.showConfirmDialog(this, "Do you want to return to main menu?", "Exit Game",
                     JOptionPane.YES_NO_OPTION);
             paddleKeyTimer.stop();
