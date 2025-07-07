@@ -512,15 +512,15 @@ public class PongGame extends GameMode {
                 if(globalConfig.getMultiplayer()){
                     JOptionPane.showMessageDialog(this, "Player 1 Score: " + userScore + "\nPlayer 2 Score: + " + pcScore,
                         "Game Ended", JOptionPane.INFORMATION_MESSAGE);
-                    SoundPlayer.stop();
                     returnToMainMenu();
+                    SoundPlayer.stop();
                 return;
                 }
                 else {
                     JOptionPane.showMessageDialog(this, "Your Score: " + userScore + "\nPC Score: + " + pcScore,
                         "Game Ended", JOptionPane.INFORMATION_MESSAGE);
-                    SoundPlayer.stop();
                     returnToMainMenu();
+                    SoundPlayer.stop();
                     return;
 
                 }
