@@ -33,7 +33,7 @@ public class gameRender extends JFrame {
 
         //set volume before game start
         SoundPlayer.setVolume(volumeLevel);
-        game = new PongGame(difficultyLevel, winPoint, modeSelected);
+        game = new PongGame(difficultyLevel, winPoint, modeSelected, mainFrame);
         playArea.add(game);
 
         gameTimer = new Timer(DELAY, new ActionListener() {

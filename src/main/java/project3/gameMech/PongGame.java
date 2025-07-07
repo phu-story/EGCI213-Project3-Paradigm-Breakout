@@ -64,14 +64,16 @@ public class PongGame extends GameMode {
     static final String PATH = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
     private static Image background;
     private static String backgroundName = "BG1";
+    private MainApplication mainFrame;
     // private static int currvolumeLevel = 50;        // Suppress warning not using varaible
 
     // settings
     // private int difficultyLevel;                    // Suppress warning not using varaible
     // private int winPoint;                           // Suppress warning not using varaible
 
-    public PongGame(int difficultyLevel, int winPoint, int modeSelected) {
+    public PongGame(int difficultyLevel, int winPoint, int modeSelected, MainApplication mainFrame) {
         this.winpoint = winPoint;
+        this.mainFrame = mainFrame;
         globalConfig.gameModeSetter(modeSelected, difficultyLevel);
 
         SoundPlayer.stop();
@@ -454,13 +456,23 @@ public class PongGame extends GameMode {
         {
             pcScore++;
             if (winpoint > 0 && pcScore >= winpoint) {
-                System.exit(0);
+                JOptionPane.showMessageDialog(this, "Your Score: " + userScore + "\n PC Score: + " + pcScore, "Game Ended", JOptionPane.INFORMATION_MESSAGE);
+                Container contentPane = mainFrame.getContentPane();
+                contentPane.removeAll();
+                contentPane.add(mainFrame.getMainMenu());
+                contentPane.revalidate();
+                contentPane.repaint();
             }
             reset();
         } else if (gameBall.getX() > WINDOW_WIDTH) {
             userScore++;
             if (winpoint > 0 && userScore >= winpoint) {
-                System.exit(0);
+                JOptionPane.showMessageDialog(this, "Your Score: " + userScore + "\n PC Score: + " + pcScore, "Game Ended", JOptionPane.INFORMATION_MESSAGE);
+                Container contentPane = mainFrame.getContentPane();
+                contentPane.removeAll();
+                contentPane.add(mainFrame.getMainMenu());
+                contentPane.revalidate();
+                contentPane.repaint();
             }
             reset();
         }
