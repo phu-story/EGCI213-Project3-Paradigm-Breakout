@@ -33,8 +33,8 @@ class Ball {
         this.cy = b.cy;
         this.speed = b.speed;
         this.color = b.color;
-        this.width = width;
-        this.height = height;
+        // this.width = width;
+        // this.height = height;
     }
 
     public void paint(Graphics g) { //ball image

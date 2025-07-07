@@ -2,6 +2,8 @@ package project3.gameMech;
 
 import javax.swing.*;
 
+import project3.MainApplication;
+
 // import project3.gameRender;
 
 import java.awt.*;
@@ -32,26 +34,30 @@ public class PongGame extends GameMode {
      */
 
     GameMode globalConfig = new GameMode();
-    
-    // private int cx = 4, cy = 4, ballSpeed = 4; // to make it harder, increase all THREE variables
+
+    // private int cx = 4, cy = 4, ballSpeed = 4; // to make it harder, increase all
+    // THREE variables
     // private int userPaddleSpeed = 3;
     // private int pcPaddleSpeed = 3;
-    // private final int refreshRate = gameRender.DELAY; // want to change this? change main's delay
-    // private final Color pcPaddleColor = Color.RED, userPaddleColor = Color.BLUE, ballColor = Color.YELLOW;
+    // private final int refreshRate = gameRender.DELAY; // want to change this?
+    // change main's delay
+    // private final Color pcPaddleColor = Color.RED, userPaddleColor = Color.BLUE,
+    // ballColor = Color.YELLOW;
     // private boolean pcAccidentalMiss;
 
     // private final int userPaddleHeight = 80;
     // private final int pcPaddleHeight = 80;
 
-    private int userScore, pcScore, bounceCount, intUserLoc2, intPcLoc2;
+    private int userScore, pcScore, bounceCount;
+    // private int intUserLoc2, intPcLoc2; // Suppress warning not using varaible
     private int detectedCollideY;
     private boolean pcGotToTarget;
     private int oscillateTowards;
 
     private Timer paddleKeyTimer;
-    private boolean upKeyPressed=false, downKeyPressed=false;
-    private boolean wPressed=false, sPressed=false;
-    
+    private boolean upKeyPressed = false, downKeyPressed = false;
+    private boolean wPressed = false, sPressed = false;
+
     // I don't know but remove this, java won't listen key
     public void addNotify() {
         super.addNotify();
@@ -61,26 +67,31 @@ public class PongGame extends GameMode {
     static final String PATH = System.getProperty("user.dir") + "/src/main/java/project3/resources/";
     private static Image background;
     private static String backgroundName = "BG1";
-    private static int currvolumeLevel = 50;
+    private MainApplication mainFrame;
+    // private static int currvolumeLevel = 50; // Suppress warning not using
+    // varaible
 
     // settings
-    private int difficultyLevel;
-    private int winPoint;
+    // private int difficultyLevel; // Suppress warning not using varaible
+    // private int winPoint; // Suppress warning not using varaible
 
-    public PongGame(int difficultyLevel, int winPoint) {
+    public PongGame(int difficultyLevel, int winPoint, int modeSelected, MainApplication mainFrame) {
         this.winpoint = winPoint;
+        this.mainFrame = mainFrame;
+        globalConfig.gameModeSetter(modeSelected, difficultyLevel);
 
         SoundPlayer.stop();
         SoundPlayer.playBackgroundSound(PATH + "backgroundsound.wav");
 
-        userScore =0; pcScore =0;
-        bounceCount=0;
+        userScore = 0;
+        pcScore = 0;
+        bounceCount = 0;
 
-        detectedCollideY=-1;
-        pcGotToTarget=false;
-        oscillateTowards=0;
-        pcAccidentalMiss=false;
-        
+        detectedCollideY = -1;
+        pcGotToTarget = false;
+        oscillateTowards = 0;
+        pcAccidentalMiss = false;
+
         requestFocusInWindow();
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
@@ -91,19 +102,20 @@ public class PongGame extends GameMode {
 
         paddleKeyTimer = new Timer(getRefreshRate(), e -> {
             // if (upKeyPressed && userPaddle.getY() > 0) {
-            //         userMouseY -= globalConfig.getUserPaddleSpeed();
-            //         // System.out.println("key is supposed to be moving 01");
-            //     }
-            //     if (downKeyPressed && userPaddle.getY() < WINDOW_HEIGHT - userPaddle.getHeight()) {
-            //         userMouseY += globalConfig.getUserPaddleSpeed();
-            //         // System.out.println("key is supposed to be moving 02");
-            //     }
+            // userMouseY -= globalConfig.getUserPaddleSpeed();
+            // // System.out.println("key is supposed to be moving 01");
+            // }
+            // if (downKeyPressed && userPaddle.getY() < WINDOW_HEIGHT -
+            // userPaddle.getHeight()) {
+            // userMouseY += globalConfig.getUserPaddleSpeed();
+            // // System.out.println("key is supposed to be moving 02");
+            // }
 
             // paddleKeyTimer = new Timer(globalConfig.getRefreshRate(), e -> {
-            //     
+            //
             // });
 
-            if (!getMultiplayer()) {
+            if (!globalConfig.getMultiplayer()) {
                 if (upKeyPressed && userPaddle.getY() > 0) {
                     userMouseY -= globalConfig.getUserPaddleSpeed();
                     // System.out.println("key is supposed to be moving 01");
@@ -157,46 +169,53 @@ public class PongGame extends GameMode {
     public void intGame() { // comes after constructor
 
         if (globalConfig.getMultiplayer()) {
-            // idk why but when frame gets scale paddle will try to go to certain point first and uncontrollably
+            // idk why but when frame gets scale paddle will try to go to certain point
+            // first and uncontrollably
             // this will control the paddle spawn to match its target point
-            userMouseY = (WINDOW_HEIGHT/2) - (globalConfig.getUserPaddleHeight()/2);
-            pcMouseY = (WINDOW_HEIGHT/2) - (globalConfig.getPcPaddleHeight()/2);
+            userMouseY = (WINDOW_HEIGHT / 2) - (globalConfig.getUserPaddleHeight() / 2);
+            pcMouseY = (WINDOW_HEIGHT / 2) - (globalConfig.getPcPaddleHeight() / 2);
 
-            gameBall = new Ball(300, 200, 
-                globalConfig.getCx(), 
-                globalConfig.getCy(), 
-                globalConfig.getBallSpeed(),
-                globalConfig.getBallColor(), 
-                40, 30
-            ); // SPEED IS 3
+            gameBall = new Ball(300, 200,
+                    globalConfig.getCx(),
+                    globalConfig.getCy(),
+                    globalConfig.getBallSpeed(),
+                    globalConfig.getBallColor(),
+                    40, 30); // SPEED IS 3
             futureBall = new Ball(gameBall);
-            userPaddle = new Paddle(10, (WINDOW_HEIGHT/2) - globalConfig.getUserPaddleHeight(),
+            userPaddle = new Paddle(10, (WINDOW_HEIGHT / 2) - globalConfig.getUserPaddleHeight(),
                     globalConfig.getUserPaddleHeight(),
                     globalConfig.getUserPaddleSpeed(),
                     globalConfig.getUserPaddleColor());
-            pcPaddle = new Paddle(WINDOW_WIDTH - 40, (WINDOW_HEIGHT/2) - globalConfig.getPcPaddleHeight(), // x,y cord of starting position
+            pcPaddle = new Paddle(WINDOW_WIDTH - 40, (WINDOW_HEIGHT / 2) - globalConfig.getPcPaddleHeight(), // x,y cord
+                                                                                                             // of
+                                                                                                             // starting
+                                                                                                             // position
                     globalConfig.getPcPaddleHeight(), // Paddle's height
                     globalConfig.getPcPaddleSpeed(), // Moveable unit per frame
                     globalConfig.getPcPaddleColor() // paddle color
             );
         } else {
             gameBall = new Ball(300, 200, globalConfig.getCx(), globalConfig.getCy(), globalConfig.getBallSpeed(),
-                globalConfig.getBallColor(), 40, 30); // SPEED IS 3
+                    globalConfig.getBallColor(), 40, 30); // SPEED IS 3
             futureBall = new Ball(gameBall);
-            userPaddle = new Paddle(10, (WINDOW_HEIGHT / 2) - (globalConfig.getUserPaddleHeight()/2),
+            userPaddle = new Paddle(10, (WINDOW_HEIGHT / 2) - (globalConfig.getUserPaddleHeight() / 2),
                     globalConfig.getUserPaddleHeight(),
                     globalConfig.getUserPaddleSpeed(),
                     globalConfig.getUserPaddleColor());
 
-            pcPaddle = new Paddle(WINDOW_WIDTH - 40, (WINDOW_HEIGHT / 2) - (globalConfig.getPcPaddleHeight()/2), // x,y cord of starting position
+            pcPaddle = new Paddle(WINDOW_WIDTH - 40, (WINDOW_HEIGHT / 2) - (globalConfig.getPcPaddleHeight() / 2), // x,y
+                                                                                                                   // cord
+                                                                                                                   // of
+                                                                                                                   // starting
+                                                                                                                   // position
                     globalConfig.getPcPaddleHeight(), // Paddle's height
                     globalConfig.getPcPaddleSpeed(), // Moveable unit per frame
                     globalConfig.getPcPaddleColor() // paddle color
             );
         }
 
-        
     }
+
     // To-do: Further Ui work
     @Override
     public void paintComponent(Graphics g) {
@@ -213,7 +232,9 @@ public class PongGame extends GameMode {
         // label
         String user = String.valueOf(userScore); // score
         String pc = String.valueOf(pcScore);
-        int boxSize = 100 + 80 + (20 * user.toCharArray().length) + 10 + 70 + (20 * pc.toCharArray().length); // calc header width
+        int boxSize = 100 + 80 + (20 * user.toCharArray().length) + 10 + 70 + (20 * pc.toCharArray().length); // calc
+                                                                                                              // header
+                                                                                                              // width
         int x = (800 - boxSize) / 2, y = 20;
 
         Image scoreLabel = new ImageIcon(PATH + "score.png").getImage();
@@ -247,6 +268,10 @@ public class PongGame extends GameMode {
     }
 
     public void gameLogic() {
+        if (this.gameBall == null || this.userPaddle == null || this.pcPaddle == null) {
+            return;
+        }
+
         gameBall.moveBall();
         gameBall.bounceOffEdge(0, WINDOW_HEIGHT);
 
@@ -283,7 +308,6 @@ public class PongGame extends GameMode {
             if (Math.abs((pcPaddle.getY() + pcPaddle.getHeight() / 2) - detectedCollideY) < 1 && !pcGotToTarget) {
                 pcGotToTarget = true;
                 System.out.println("pc paddle got to designated target"); // for better ai movement
-
             }
 
             if (!pcGotToTarget) {
@@ -315,7 +339,7 @@ public class PongGame extends GameMode {
 
             if (userPaddle.checkCollision(gameBall)) {
                 gameBall.reverseX();
-                gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH + 1);
+                gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH - 3);
                 if (globalConfig.getDynamicBallSpeed()) {
                     bounceCount++;
                 }
@@ -325,14 +349,15 @@ public class PongGame extends GameMode {
 
             if (pcPaddle.checkCollision(gameBall)) {
                 gameBall.reverseX();
-                gameBall.setX(pcPaddle.getX() - 10); // make it so that some part of the ball still stuck inside the
+                // 36 is fine-tuned, can't scale
+                gameBall.setX(pcPaddle.getX() - 36); // make it so that some part of the ball still stuck inside the
                                                      // paddle
                                                      // make it more.. collision realistic?
                 futureBall = new Ball(gameBall); // REMOVE TS PART FOR SIMPLER AI
                 // reset the detected collision point
                 detectedCollideY = -1;
                 pcGotToTarget = false; // TO THIS
-                
+
                 bounceCount++;
                 SoundPlayer.playsound(PATH + "hitsound.wav");
 
@@ -354,7 +379,7 @@ public class PongGame extends GameMode {
                     gameBall.increaseSpeed();
                 }
             }
-        } else {                                    // Multiplayer
+        } else { // Multiplayer
             // System.out.println(pcMouseY);
 
             pcPaddle.moveToward(pcMouseY);
@@ -362,7 +387,7 @@ public class PongGame extends GameMode {
 
             if (userPaddle.checkCollision(gameBall)) {
                 gameBall.reverseX();
-                gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH/2 + 5);
+                gameBall.setX(userPaddle.getX() + Paddle.PADDLE_WIDTH / 2 + 5);
                 bounceCount++;
 
             }
@@ -398,7 +423,7 @@ public class PongGame extends GameMode {
         // userMouseY = e.getY();
 
         // To fix
-        if(!globalConfig.getMultiplayer()){
+        if (!globalConfig.getMultiplayer()) {
             userMouseY = e.getY();
         }
     }
@@ -410,24 +435,24 @@ public class PongGame extends GameMode {
             e.printStackTrace();
         }
 
-        // gameBall = new Ball(300, 200, 
-        //         globalConfig.getCx(), 
-        //         globalConfig.getCy(), 
-        //         globalConfig.getBallSpeed(), 
-        //         globalConfig.getBallColor(), 10
+        // gameBall = new Ball(300, 200,
+        // globalConfig.getCx(),
+        // globalConfig.getCy(),
+        // globalConfig.getBallSpeed(),
+        // globalConfig.getBallColor(), 10
         // );
 
         // futureBall = new Ball(gameBall);
-        // userPaddle = new Paddle(10, 200, 
-        //         globalConfig.getUserPaddleHeight(), 
-        //         globalConfig.getUserPaddleSpeed(), 
-        //         globalConfig.getUserPaddleColor()
+        // userPaddle = new Paddle(10, 200,
+        // globalConfig.getUserPaddleHeight(),
+        // globalConfig.getUserPaddleSpeed(),
+        // globalConfig.getUserPaddleColor()
         // );
 
         // pcPaddle = new Paddle(WINDOW_WIDTH - 40, WINDOW_HEIGHT / 2,
-        //         globalConfig.getPcPaddleHeight(),
-        //         globalConfig.getPcPaddleSpeed(),
-        //         globalConfig.getPcPaddleColor());
+        // globalConfig.getPcPaddleHeight(),
+        // globalConfig.getPcPaddleSpeed(),
+        // globalConfig.getPcPaddleColor());
 
         intGame();
 
@@ -437,8 +462,8 @@ public class PongGame extends GameMode {
         pcGotToTarget = false; // might be useful in future
         pcAccidentalMiss = false;
 
-        userMouseY = WINDOW_HEIGHT/2 - globalConfig.getUserPaddleHeight()/2;
-        pcMouseY = WINDOW_HEIGHT/2 - globalConfig.getPcPaddleHeight()/2;
+        userMouseY = WINDOW_HEIGHT / 2 - globalConfig.getUserPaddleHeight() / 2;
+        pcMouseY = WINDOW_HEIGHT / 2 - globalConfig.getPcPaddleHeight() / 2;
         upKeyPressed = false;
         downKeyPressed = false;
         wPressed = false;
@@ -451,13 +476,19 @@ public class PongGame extends GameMode {
         {
             pcScore++;
             if (winpoint > 0 && pcScore >= winpoint) {
-                System.exit(0);
+                JOptionPane.showMessageDialog(this, "Your Score: " + userScore + "\n PC Score: + " + pcScore,
+                        "Game Ended", JOptionPane.INFORMATION_MESSAGE);
+                returnToMainMenu();
+                return;
             }
             reset();
         } else if (gameBall.getX() > WINDOW_WIDTH) {
             userScore++;
             if (winpoint > 0 && userScore >= winpoint) {
-                System.exit(0);
+                JOptionPane.showMessageDialog(this, "Your Score: " + userScore + "\n PC Score: + " + pcScore,
+                        "Game Ended", JOptionPane.INFORMATION_MESSAGE);
+                returnToMainMenu();
+                return;
             }
             reset();
         }
@@ -466,13 +497,22 @@ public class PongGame extends GameMode {
     @Override
     public void keyPressed(KeyEvent e) {
         int keycode = e.getKeyCode();
+        if (keycode == KeyEvent.VK_ESCAPE) {
+            int exit = JOptionPane.showConfirmDialog(this, "Do you want to return to main menu?", "Exit Game",
+                    JOptionPane.YES_NO_OPTION);
+            paddleKeyTimer.stop();
+            if (exit == JOptionPane.YES_OPTION) {
+                returnToMainMenu();
+            } else {
+                paddleKeyTimer.start();
+            }
+        }
 
-        if(!globalConfig.getMultiplayer())
-        {
+        if (!globalConfig.getMultiplayer()) {
             if (keycode == KeyEvent.VK_UP || keycode == KeyEvent.VK_W) {
                 if (!upKeyPressed) {
                     upKeyPressed = true;
-                    //System.out.println("key is supposed to be moving 03");
+                    // System.out.println("key is supposed to be moving 03");
                     if (!paddleKeyTimer.isRunning()) {
                         paddleKeyTimer.start(); // Start the timer only once
                     }
@@ -482,32 +522,30 @@ public class PongGame extends GameMode {
             if (keycode == KeyEvent.VK_DOWN || keycode == KeyEvent.VK_S) {
                 if (!downKeyPressed) {
                     downKeyPressed = true;
-                    //System.out.println("key is supposed to be moving 04");
+                    // System.out.println("key is supposed to be moving 04");
                     if (!paddleKeyTimer.isRunning()) {
                         paddleKeyTimer.start(); // Start the timer only once
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             if (keycode == KeyEvent.VK_UP) {
                 if (!upKeyPressed) {
                     upKeyPressed = true;
-                    //System.out.println("key is supposed to be moving 03");
+                    System.out.println("key is supposed to be moving 03");
                     if (!paddleKeyTimer.isRunning()) {
                         paddleKeyTimer.start(); // Start the timer only once
-                        
+
                     }
                 }
             }
             if (keycode == KeyEvent.VK_W) {
                 if (!wPressed) {
                     wPressed = true;
-                    //System.out.println("key is supposed to be moving 03");
+                    // System.out.println("key is supposed to be moving 03");
                     if (!paddleKeyTimer.isRunning()) {
                         paddleKeyTimer.start(); // Start the timer only once
-                        
+
                     }
                 }
             }
@@ -515,7 +553,7 @@ public class PongGame extends GameMode {
             if (keycode == KeyEvent.VK_DOWN) {
                 if (!downKeyPressed) {
                     downKeyPressed = true;
-                    //System.out.println("key is supposed to be moving 04");
+                    // System.out.println("key is supposed to be moving 04");
                     if (!paddleKeyTimer.isRunning()) {
                         paddleKeyTimer.start(); // Start the timer only once
                     }
@@ -525,10 +563,10 @@ public class PongGame extends GameMode {
             if (keycode == KeyEvent.VK_S) {
                 if (!sPressed) {
                     sPressed = true;
-                    //System.out.println("key is supposed to be moving 03");
+                    // System.out.println("key is supposed to be moving 03");
                     if (!paddleKeyTimer.isRunning()) {
                         paddleKeyTimer.start(); // Start the timer only once
-                        
+
                     }
                 }
             }
@@ -537,28 +575,25 @@ public class PongGame extends GameMode {
 
     @Override
     public void keyReleased(KeyEvent e) {
-         int keyCode = e.getKeyCode();
-        
-        if(!globalConfig.getMultiplayer())
-        {
-            if (keyCode == KeyEvent.VK_UP  || keyCode == KeyEvent.VK_W ) {
-                upKeyPressed = false;  // Stop printing when UP key is released
-                //System.out.println("key is supposed to be moving 05");
-                //classical debug technique
+        int keyCode = e.getKeyCode();
+
+        if (!globalConfig.getMultiplayer()) {
+            if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
+                upKeyPressed = false; // Stop printing when UP key is released
+                // System.out.println("key is supposed to be moving 05");
+                // classical debug technique
             }
 
-            if (keyCode == KeyEvent.VK_DOWN  || keyCode == KeyEvent.VK_S) {
-                downKeyPressed = false;  // Stop printing when DOWN key is released
-                //System.out.println("key is supposed to be moving 06");
+            if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
+                downKeyPressed = false; // Stop printing when DOWN key is released
+                // System.out.println("key is supposed to be moving 06");
             }
 
             // Stop the timer when no keys are pressed
             if (!upKeyPressed && !downKeyPressed) {
                 paddleKeyTimer.stop();
             }
-        }
-        else
-        {
+        } else {
             if (keyCode == KeyEvent.VK_UP) {
                 upKeyPressed = false;
             }
@@ -599,4 +634,12 @@ public class PongGame extends GameMode {
         pcPaddle = null;
     }
 
+    public void returnToMainMenu() {
+        gameBall = null;
+        userPaddle = null;
+        pcPaddle = null;
+        mainFrame.getMainMenu();
+
+        super.removeAll();
+    }
 }
