@@ -109,7 +109,7 @@ public class PongGame extends GameMode {
             //     
             // });
 
-            if (!getMultiplayer()) {
+            if (!globalConfig.getMultiplayer()) {
                 if (upKeyPressed && userPaddle.getY() > 0) {
                     userMouseY -= globalConfig.getUserPaddleSpeed();
                     // System.out.println("key is supposed to be moving 01");
@@ -481,18 +481,20 @@ public class PongGame extends GameMode {
     @Override
     public void keyPressed(KeyEvent e) {
         int keycode = e.getKeyCode();
+        if (keycode == KeyEvent.VK_ESCAPE) {
+            int exit = JOptionPane.showConfirmDialog(this, "Do you want to return to main menu?", "Exit Game", JOptionPane.YES_NO_OPTION);
+            paddleKeyTimer.stop();
+            if (exit == JOptionPane.YES_OPTION) {
+                gameBall = null;
+                userPaddle = null;
+                pcPaddle = null;
+                mainFrame.getMainMenu();
 
-        // if (keycode == KeyEvent.VK_ESCAPE) {
-        //     int exit = JOptionPane.showConfirmDialog(this, "Are you sure to return to main menu?", "Exit Game", JOptionPane.YES_NO_OPTION);
-        //     if (exit == JOptionPane.YES_OPTION) {
-        //         gameBall = null;
-        //         userPaddle = null;
-        //         pcPaddle = null;
-
-        //         paddleKeyTimer.stop();;
-        //         super.removeAll();
-        //     }
-        // }
+                super.removeAll();
+            } else {
+                paddleKeyTimer.start();
+            }
+        }
 
         if(!globalConfig.getMultiplayer())
         {
@@ -521,7 +523,7 @@ public class PongGame extends GameMode {
             if (keycode == KeyEvent.VK_UP) {
                 if (!upKeyPressed) {
                     upKeyPressed = true;
-                    //System.out.println("key is supposed to be moving 03");
+                    System.out.println("key is supposed to be moving 03");
                     if (!paddleKeyTimer.isRunning()) {
                         paddleKeyTimer.start(); // Start the timer only once
                         

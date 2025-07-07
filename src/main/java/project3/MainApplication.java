@@ -310,15 +310,13 @@ public class MainApplication extends JFrame {
         toggleButton[4] = new JRadioButton("You Vs Skynet");
         toggleButton[5] = new JRadioButton("Deathwish");
         toggleButton[6] = new JRadioButton("Practice");
-        toggleButton[7] = new JRadioButton("Pingpong Diplomacy");
-        toggleButton[8] = new JRadioButton("DPRK Athlete");
 
         ButtonGroup buttonGroup = new ButtonGroup();
         JPanel singlePanel = new JPanel();
         singlePanel.setLayout(new BoxLayout(singlePanel, BoxLayout.Y_AXIS));
         singlePanel.setBorder(BorderFactory.createTitledBorder("Single Player Mode"));
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 7; i++) {
             if (modeSelected == i) {
                 toggleButton[i].setSelected(true);
             }
@@ -328,6 +326,8 @@ public class MainApplication extends JFrame {
         }
 
         // --- MULTIPLAYER SECTION ---
+        toggleButton[7] = new JRadioButton("Pingpong Diplomacy");
+        toggleButton[8] = new JRadioButton("DPRK Athlete");
         toggleButton[9] = new JRadioButton("Casual");
         toggleButton[10] = new JRadioButton("Intermediate");
 
@@ -335,7 +335,7 @@ public class MainApplication extends JFrame {
         multiPanel.setLayout(new BoxLayout(multiPanel, BoxLayout.Y_AXIS));
         multiPanel.setBorder(BorderFactory.createTitledBorder("Multiplayer Mode"));
 
-        for (int i = 9; i <= 10; i++) {
+        for (int i = 7; i <= 10; i++) {
             if (modeSelected == i) {
                 toggleButton[i].setSelected(true);
             }

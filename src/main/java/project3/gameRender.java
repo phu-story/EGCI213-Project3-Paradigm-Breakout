@@ -1,16 +1,16 @@
 package project3;
 
 import java.awt.BorderLayout;
-import java.awt.Container;
+// import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+// import java.awt.event.KeyAdapter;
+// import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+// import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+// import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import project3.gameMech.PongGame;
@@ -50,29 +50,29 @@ public class gameRender extends JFrame {
         // playArea.requestFocusInWindow();
 
         // Press ESC to exit
-        SwingUtilities.invokeLater(() -> {
-            playArea.requestFocusInWindow();
-            playArea.addKeyListener(new KeyAdapter() {
-                @Override
-                public void keyPressed(KeyEvent e) {
-                    if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                        gameTimer.stop();
-                        int result = JOptionPane.showConfirmDialog(playArea, "Do you want to return to main menu?", "Confirm Exit", JOptionPane.YES_NO_OPTION);
-                        if (result == JOptionPane.YES_OPTION) {
-                            stopCurrentGame();
+        // SwingUtilities.invokeLater(() -> {
+        //     playArea.requestFocusInWindow();
+        //     playArea.addKeyListener(new KeyAdapter() {
+        //         @Override
+        //         public void keyPressed(KeyEvent e) {
+        //             if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        //                 gameTimer.stop();
+        //                 int result = JOptionPane.showConfirmDialog(playArea, "Do you want to return to main menu?", "Confirm Exit", JOptionPane.YES_NO_OPTION);
+        //                 if (result == JOptionPane.YES_OPTION) {
+        //                     stopCurrentGame();
 
-                            Container contentPane = mainFrame.getContentPane();
-                            contentPane.removeAll();
-                            contentPane.add(mainFrame.getMainMenu());
-                            contentPane.revalidate();
-                            contentPane.repaint();
-                        } else {
-                            gameTimer.restart();
-                        }
-                    }
-                }
-            });
-        });
+        //                     Container contentPane = mainFrame.getContentPane();
+        //                     contentPane.removeAll();
+        //                     contentPane.add(mainFrame.getMainMenu());
+        //                     contentPane.revalidate();
+        //                     contentPane.repaint();
+        //                 } else {
+        //                     gameTimer.restart();
+        //                 }
+        //             }
+        //         }
+        //     });
+        // });
 
         
         // For dubug and test, feel free to comment it

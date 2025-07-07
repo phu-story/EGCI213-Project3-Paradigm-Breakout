@@ -250,6 +250,7 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     */
 
     switch (inMode) {
+      // -- Single --
       case 0:
         setTotalBallspeed(3 + diffLevel);
         break;
@@ -271,6 +272,8 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
       case 6:
         jail();
         break;
+
+        // -- Multi --
       case 7:
         pingPongDiplomacy();
         break;
@@ -392,7 +395,6 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
 
   @Override
   public void keyPressed(KeyEvent e) {
-    System.out.println("FUCK YOU NIGGER");
   }
 
   @Override
