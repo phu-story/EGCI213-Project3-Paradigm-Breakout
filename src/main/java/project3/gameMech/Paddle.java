@@ -10,17 +10,17 @@ class Paddle {
     private int height, x, y, speed;
     private Color color;
 
-    //constant
+    // constant
     static final int PADDLE_WIDTH = 15;
 
     /**
      * A paddle is just a ping pong bat
      *
-     * @param x x cord of starting position of a paddle
-     * @param y y cord of starting position of a paddle
+     * @param x      x cord of starting position of a paddle
+     * @param y      y cord of starting position of a paddle
      * @param height the paddle height
-     * @param speed the amount the paddle may move per frame CAN CHANGE LATER
-     * @param color the paddle color
+     * @param speed  the amount the paddle may move per frame CAN CHANGE LATER
+     * @param color  the paddle color
      */
     public Paddle(int x, int y, int height, int speed, Color color) {
         this.x = x;
@@ -64,13 +64,13 @@ class Paddle {
          * @param moveToY - position the paddle is centered on
          */
 
-        //find the location of the center of the paddle
-        //@param centerY is also a "relative" center of the paddle, based on current y
+        // find the location of the center of the paddle
+        // @param centerY is also a "relative" center of the paddle, based on current y
         int centerY = y + height / 2;
 
-        if (Math.abs(centerY - moveToY) > speed) //check whether the difference between moveTo
-        {                                       //and point we want to go is not more than the distance
-            if (centerY > moveToY) //paddle usually travels
+        if (Math.abs(centerY - moveToY) > speed) // check whether the difference between moveTo
+        { // and point we want to go is not more than the distance
+            if (centerY > moveToY) // paddle usually travels
             {
                 y -= speed;
             }
@@ -92,15 +92,15 @@ class Paddle {
         int rightX = x + PADDLE_WIDTH;
         int bottomY = y + height;
 
-        if ((b.getX() + b.getWidth()) > x && b.getX() < rightX) //check if ball is between the paddle (x cord)
+        if ((b.getX() + b.getWidth()) > x && b.getX() < rightX) // check if ball is between the paddle (x cord)
         {
-            if ((b.getY() + b.getHeight()) > y && b.getY() < bottomY) //check if ball is between the paddle (y cord)
+            if ((b.getY() + b.getHeight()) > y && b.getY() < bottomY) // check if ball is between the paddle (y cord)
             {
                 return true;
             }
         }
 
-        return false; //nah, they aint be hitting bro (insert emoji cry)
+        return false; // nah, they aint be hitting bro (insert emoji cry)
 
     }
 

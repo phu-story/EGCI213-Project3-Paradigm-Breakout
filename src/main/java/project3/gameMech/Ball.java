@@ -10,7 +10,7 @@ class Ball {
 
     private int x, y, cx, cy, speed, width, height;
     private final Color color;
-    //static final int MAX_SPEED = 7;
+    // static final int MAX_SPEED = 7;
     static final int MAX_SPEED = 14;
     private static final Image ballImage = new ImageIcon(PongGame.PATH + "ball.png").getImage();
 
@@ -37,9 +37,9 @@ class Ball {
         // this.height = height;
     }
 
-    public void paint(Graphics g) { //ball image
+    public void paint(Graphics g) { // ball image
 
-        g.drawImage(ballImage, x, y, width, height, null); //should be 40*30
+        g.drawImage(ballImage, x, y, width, height, null); // should be 40*30
     }
 
     public void moveBall() {
@@ -49,7 +49,7 @@ class Ball {
 
     public void bounceOffEdge(int top, int bottom) {
         /**
-         * @param top - the y value of the top of the screen
+         * @param top    - the y value of the top of the screen
          * @param bottom - the y value of the bottom of the screen
          */
 
@@ -59,14 +59,16 @@ class Ball {
             reverseY();
         }
 
-        /*if(x < 0)
-        {
-            reverseX();
-        }
-        else if(x > 640-size - 10)   //code to cage the ball. but since getting off x bound
-        {                            //will result in opp's getting more score, ts is no important no more
-            reverseX();
-        }
+        /*
+         * if(x < 0)
+         * {
+         * reverseX();
+         * }
+         * else if(x > 640-size - 10) //code to cage the ball. but since getting off x
+         * bound
+         * { //will result in opp's getting more score, ts is no important no more
+         * reverseX();
+         * }
          */
     }
 

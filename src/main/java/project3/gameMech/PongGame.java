@@ -15,7 +15,7 @@ public class PongGame extends GameMode {
     static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
     private Ball gameBall, futureBall;
     /**
-     * TRON LEGACY TYPE SHIT, nah, in order to make pc paddle smarter
+     * TRON LEGACY TYPE, nah, in order to make pc paddle smarter
      * we can make an invisible ball that foresees normal ball action and have
      * pc paddle responds to that ball instead
      */
