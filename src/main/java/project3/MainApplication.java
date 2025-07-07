@@ -11,21 +11,22 @@ package project3;
 
  */
 
- /*
-    Requirement:
-    • JTextField, JPasswordField, or JTextArea 
-    • JCheckBox or JRadioButton : at least 5 items 
-    • JComboBox : at least 5 items 
-    • JList : at least 5 items 
-    • JButton : one frame/dialog must have a button that opens another frame/dialog 
-    • Names and IDs of everyone in your group, as any component
- */
+/*
+   Requirement:
+   • JTextField, JPasswordField, or JTextArea 
+   • JCheckBox or JRadioButton : at least 5 items 
+   • JComboBox : at least 5 items 
+   • JList : at least 5 items 
+   • JButton : one frame/dialog must have a button that opens another frame/dialog 
+   • Names and IDs of everyone in your group, as any component
+*/
 import java.awt.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
 
 import java.awt.event.*;
+import java.util.Random;
 
 import project3.gameMech.PongGame;
 import project3.gameMech.SoundPlayer;
@@ -58,14 +59,16 @@ public class MainApplication extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    int exit = JOptionPane.showConfirmDialog(MainApplication.this, "Are you sure to exit?", "Exit Game", JOptionPane.YES_NO_OPTION);
+                    int exit = JOptionPane.showConfirmDialog(MainApplication.this, "Are you sure to exit?", "Exit Game",
+                            JOptionPane.YES_NO_OPTION);
                     if (exit == JOptionPane.YES_OPTION) {
                         System.exit(0);
                     }
 
                 } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     contentPane.removeAll();
-                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, winPoint, currentFrame, modeSelected));
+                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, winPoint, currentFrame,
+                            modeSelected));
                     contentPane.revalidate();
                     contentPane.repaint();
                 }
@@ -74,8 +77,8 @@ public class MainApplication extends JFrame {
 
         currentFrame = this;
         contentPane = (JPanel) getContentPane();
-        //contentPane.setBackground(new Color(20, 16, 24));
-        //set path for background
+        // contentPane.setBackground(new Color(20, 16, 24));
+        // set path for background
         // Set background panel
         JPanel backgroundPanel = new JPanel() {
             private Image background = new ImageIcon(PATH + "BG1.png").getImage();
@@ -97,7 +100,7 @@ public class MainApplication extends JFrame {
         SoundPlayer.setVolume(volumeLevel);
     }
 
-    // Using in gameRender to come back to main menu 
+    // Using in gameRender to come back to main menu
     public JPanel getMainMenu() {
         contentPane.removeAll();
         contentPane.revalidate();
@@ -150,24 +153,28 @@ public class MainApplication extends JFrame {
                     // If difficulty isn't Endless
                     if (difficultyLevel != 0) {
                         // Inquire user by pop-up box
-                        String input = JOptionPane.showInputDialog(null, "How many points to win?", "Winning Score select", JOptionPane.INFORMATION_MESSAGE);
+                        String input = JOptionPane.showInputDialog(null, "How many points to win?",
+                                "Winning Score select", JOptionPane.INFORMATION_MESSAGE);
                         while (true) {
                             try {
                                 if (input == null) {
-                                    return;    // if user pressed cancelled
-                                }                                // Try interpret to int
+                                    return; // if user pressed cancelled
+                                } // Try interpret to int
                                 winPoint = Integer.parseInt(input);
-                                if (winPoint <= 0) throw new Exception();
+                                if (winPoint <= 0)
+                                    throw new Exception();
                                 break;
                             } catch (Exception e) {
-                                input = JOptionPane.showInputDialog(null, "Invalid Input\nHow many points to win?", "Winning Score select", JOptionPane.INFORMATION_MESSAGE);
+                                input = JOptionPane.showInputDialog(null, "Invalid Input\nHow many points to win?",
+                                        "Winning Score select", JOptionPane.INFORMATION_MESSAGE);
                             }
                         }
                     }
 
                     // Remove main menu Ui & Render gameplay
                     contentPane.removeAll();
-                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, winPoint, currentFrame, modeSelected));
+                    contentPane.add(gameRender.renderPlayable(volumeLevel, difficultyLevel, winPoint, currentFrame,
+                            modeSelected));
 
                     contentPane.revalidate();
                     contentPane.repaint();
@@ -179,7 +186,7 @@ public class MainApplication extends JFrame {
 
     // Helper method to add difficulty selector button, subset of main menu
     public JComboBox<String> constructDiffiBtn() {
-        String[] difficulty = {"Endless", "Easy", "Medium", "Hard", "Random"};
+        String[] difficulty = { "Endless", "Easy", "Medium", "Hard", "Random" };
         JComboBox<String> diffSelect = new JComboBox<String>(difficulty);
 
         // Set sefault difficulty to easy
@@ -187,20 +194,22 @@ public class MainApplication extends JFrame {
         diffSelect.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
                 switch (diffSelect.getSelectedIndex()) {
-                    case 0:     // Endless
+                    case 0: // Endless
                         difficultyLevel = 0;
                         break;
-                    case 1:     // Easy
+                    case 1: // Easy
                         difficultyLevel = 1;
                         break;
-                    case 2:     // Medium
+                    case 2: // Medium
                         difficultyLevel = 2;
                         break;
-                    case 3:     // Hard
+                    case 3: // Hard
                         difficultyLevel = 3;
                         break;
-                    case 4:     // Random
-                        difficultyLevel = (int) (Math.random() * 3);
+                    case 4: // Random
+                        Random r = new Random();
+                        difficultyLevel = r.nextInt(3) + 1;
+                        System.out.println("Random difficulty selected: " + difficultyLevel);
                         break;
                     default:
                         break;
@@ -222,7 +231,7 @@ public class MainApplication extends JFrame {
                 settingsPanel.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
                 // Left: JList in a scroll pane
-                String[] configOption = {"How to play", "Game Mode", "Sound", "Background Image", "Credits"};
+                String[] configOption = { "How to play", "Game Mode", "Sound", "Background Image", "Credits" };
                 JList<String> displayList = new JList<>(configOption);
                 JScrollPane listScrollPane = new JScrollPane(displayList);
 
@@ -237,27 +246,27 @@ public class MainApplication extends JFrame {
                 splitPane.setEnabled(false);
                 settingsPanel.add(splitPane);
 
-                // Listen to selected config option 
+                // Listen to selected config option
                 displayList.addListSelectionListener(new ListSelectionListener() {
                     public void valueChanged(ListSelectionEvent listEvent) {
                         int selectedIndex = displayList.getSelectedIndex();
                         configArea.removeAll();
                         switch (selectedIndex) {
-                            case 0:     // How to play
+                            case 0: // How to play
                                 configArea.add(howToPlayPanel());
                                 break;
-                            case 1:     // Gameplay
+                            case 1: // Gameplay
                                 configArea.add(gameplayPanel());
                                 break;
-                            case 2:     // Sound
+                            case 2: // Sound
                                 configArea.add(soundPanel());
                                 break;
-                            case 3:     // BG Image
+                            case 3: // BG Image
 
                                 configArea.add(selectBGPanel());
 
                                 break;
-                            case 4:     // Credits
+                            case 4: // Credits
                                 configArea.add(creditsPanel());
                                 break;
                             default:
@@ -274,7 +283,8 @@ public class MainApplication extends JFrame {
     } // End of constructSettingsBtn
 
     // *************************************************************************************
-    // From here, the rest going to be helper method to support JList within settings button
+    // From here, the rest going to be helper method to support JList within
+    // settings button
     // *************************************************************************************
     // Helper method to handle JList in option pane, subset of settings
     public JPanel howToPlayPanel() {
@@ -353,7 +363,7 @@ public class MainApplication extends JFrame {
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.add(note);
-        
+
         JPanel upperPanel = new JPanel(new GridLayout(1, 1, 0, 0));
         upperPanel.add(toggleButton[0]);
         contentPanel.add(upperPanel);
@@ -363,10 +373,9 @@ public class MainApplication extends JFrame {
 
         // --- Make scrollable only in Y-axis ---
         JScrollPane scrollPane = new JScrollPane(
-            contentPanel,
-            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-        );
+                contentPanel,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(600, 400));
         scrollPane.getVerticalScrollBar().setUnitIncrement(16); // smooth scrolling
         scrollPane.setBorder(null);
@@ -381,7 +390,7 @@ public class MainApplication extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (toggleButton[index].isSelected()) {
-                        modeSelected = index; 
+                        modeSelected = index;
                         System.out.println(toggleButton[index].getText() + " is selected (" + modeSelected + ")");
                     } else {
                         System.out.println(toggleButton[index].getText() + " is unselected (OFF)");
@@ -439,14 +448,14 @@ public class MainApplication extends JFrame {
 
     // Helper method to handle JList in option pane, subset of settings
     public static JPanel selectBGPanel() {
-        String[] bgNames = {"BG1", "BG2", "BG3", "BG4"};
-        String[] options = {"Basic", "Galaxy", "Retro", "Plain Blue"};
+        String[] bgNames = { "BG1", "BG2", "BG3", "BG4" };
+        String[] options = { "Basic", "Galaxy", "Retro", "Plain Blue" };
 
         JLabel previewLabel = new JLabel();
         previewLabel.setPreferredSize(new Dimension(200, 100));
         previewLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        final String[] selected = {PongGame.getBackgroundName()}; //name of the selected background
+        final String[] selected = { PongGame.getBackgroundName() }; // name of the selected background
 
         JRadioButton[] radioButtons = new JRadioButton[bgNames.length];
         ButtonGroup group = new ButtonGroup();
