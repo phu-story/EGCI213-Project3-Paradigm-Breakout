@@ -561,6 +561,7 @@ public class PongGame extends GameMode {
                 returnToMainMenu();
             } else {
                 paddleKeyTimer.start();
+                SoundPlayer.playBackgroundSound(PATH + "backgroundsound.wav");
             }
         }
 
