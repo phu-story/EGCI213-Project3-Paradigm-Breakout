@@ -53,6 +53,7 @@ public class PongGame extends GameMode {
     private int detectedCollideY;
     private boolean pcGotToTarget;
     private int oscillateTowards;
+    private int oscillationValue;
 
     private Timer paddleKeyTimer;
     private boolean upKeyPressed = false, downKeyPressed = false;
@@ -165,6 +166,12 @@ public class PongGame extends GameMode {
     }
 
     public void intGame() { // comes after constructor
+
+        if(globalConfig.getOscillation()) {
+            oscillationValue=3;
+        } else {
+            oscillationValue=1;
+        }
 
         if (globalConfig.getMultiplayer()) {
             // idk why but when frame gets scale paddle will try to go to certain point
@@ -341,7 +348,7 @@ public class PongGame extends GameMode {
             // IMPLEMENTED ALREADY
             // We can make it harder though
 
-            if (Math.abs((pcPaddle.getY() + pcPaddle.getHeight() / 2) - detectedCollideY) < 1 && !pcGotToTarget) {
+            if (Math.abs((pcPaddle.getY() + pcPaddle.getHeight() / 2) - detectedCollideY) < oscillationValue && !pcGotToTarget) {
                 pcGotToTarget = true;
                 System.out.println("pc paddle got to designated target"); // for better ai movement
             }

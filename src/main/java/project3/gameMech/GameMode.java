@@ -12,7 +12,7 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     private int pcPaddleSpeed = 3;
     private int refreshRate = gameRender.DELAY; // want to change this? change main's delay
     private Color pcPaddleColor = Color.RED, userPaddleColor = Color.BLUE, ballColor = Color.YELLOW;
-    protected boolean pcAccidentalMiss;
+    protected boolean pcAccidentalMiss = false;
     private int oscillationFrequency = 10;
     private int userPaddleHeight = 75;
     private int pcPaddleHeight = 75;
@@ -227,6 +227,35 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     public GameMode() {
     }
 
+    public void defaultValue()
+    {
+        cx = 3;
+        cy = 3;
+        ballSpeed = 3; // to make it harder, increase all THREE variables
+        userPaddleSpeed = 3;
+        pcPaddleSpeed = 3;
+        refreshRate = gameRender.DELAY; // want to change this? change main's delay
+        pcPaddleColor = Color.RED;
+        userPaddleColor = Color.BLUE;
+        ballColor = Color.YELLOW;
+        //pcAccidentalMiss;
+        oscillationFrequency = 10;
+        userPaddleHeight = 75;
+        pcPaddleHeight = 75;
+        intUserLoc = 200;
+        intPcLoc = 200;
+        swingState = 75;
+        percentChance = 3;
+
+        dynamicBallSpeed = true;
+        betterAi = true;
+        oscillation = false;
+        acMissMode = true;
+        multiplayer = false;
+        disableMouse = false;
+        cryBabyChance = false;
+    }
+
     public void gameModeSetter(int inMode, int diffLevel) {
         /*
          * setDynamicBallSpeed(true);
@@ -252,40 +281,52 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
         switch (inMode) {
             // -- Single --
             case 0:
+                defaultValue();
                 setTotalBallspeed(3 + diffLevel);
                 setUserPaddleSpeed(6 - diffLevel);
-                setPcPaddleSpeed(2 + diffLevel);
+                setPcPaddleSpeed(3 + diffLevel);
+                setPercentChance(6);
                 break;
             case 1:
+                defaultValue();
                 cryBaby();
                 break;
             case 2:
+                defaultValue();
                 casual();
                 break;
             case 3:
+                defaultValue();
                 intimidating();
                 break;
             case 4:
+                defaultValue();
                 meVsSkynet();
                 break;
             case 5:
+                defaultValue();
                 deathwish();
                 break;
             case 6:
+                defaultValue();
                 jail();
                 break;
 
             // -- Multi --
             case 7:
+                defaultValue();
                 pingPongDiplomacy();
                 break;
             case 8:
+                defaultValue();
                 DPRKAthelete();
                 break;
             case 9:
+                defaultValue();
                 multiCasual();
                 break;
             case 10:
+                defaultValue();
                 multiIntimidating();
                 break;
             default:

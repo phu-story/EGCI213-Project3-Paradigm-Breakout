@@ -289,6 +289,7 @@ public class MainApplication extends JFrame {
     // Helper method to handle JList in option pane, subset of settings
     public JPanel howToPlayPanel() {
         String message = "Use your mouse to glide the slider around \nPress ESC to return to main menu";
+        message = message + "\n\nUse W/S and arrow key to control \nplayer 1 and player 2 paddles in multiplayer mode";
         JTextArea textArea = new JTextArea(message);
         textArea.setEditable(false);
         textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
