@@ -23,7 +23,7 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
 
     private boolean dynamicBallSpeed = true;
     private boolean betterAi = true;
-    private boolean oscillation = true;
+    private boolean oscillation = false;
     private boolean acMissMode = true;
     private boolean multiplayer = false;
     private boolean disableMouse = false;
@@ -254,7 +254,8 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
             case 0:
                 setTotalBallspeed(3 + diffLevel);
                 setUserPaddleSpeed(6 - diffLevel);
-                setPcPaddleSpeed(2 + diffLevel);
+                setPcPaddleSpeed(3 + diffLevel);
+                setPercentChance(6);
                 break;
             case 1:
                 cryBaby();
@@ -303,8 +304,38 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
         // multiIntimidating();
         // DPRKAthelete();
     }
+    
+    public void defaultValue()
+    {
+       cx = 3;
+       cy = 3;
+       ballSpeed = 3; // to make it harder, increase all THREE variables
+        userPaddleSpeed = 3;
+        pcPaddleSpeed = 3;
+        refreshRate = gameRender.DELAY; // want to change this? change main's delay
+        pcPaddleColor = Color.RED;
+        userPaddleColor = Color.BLUE;
+        ballColor = Color.YELLOW;
+        //pcAccidentalMiss;
+        oscillationFrequency = 10;
+        userPaddleHeight = 75;
+        pcPaddleHeight = 75;
+        intUserLoc = 200;
+        intPcLoc = 200;
+        swingState = 75;
+        percentChance = 3;
+
+        dynamicBallSpeed = true;
+        betterAi = true;
+        oscillation = false;
+        acMissMode = true;
+        multiplayer = false;
+        disableMouse = false;
+        cryBabyChance = false;
+    }
 
     public void cryBaby() {
+        defaultValue();
         setDynamicBallSpeed(false);
         setBetterAi(false);
         setAcMissMode(true);
@@ -318,13 +349,16 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     }
 
     public void casual() {
+         defaultValue();
         // everything is set to default
         setTotalBallspeed(4);
         setUserPaddleSpeed(4);
         setPcPaddleSpeed(4);
+        //setOscillation(true);
     }
 
     public void intimidating() {
+         defaultValue();
         setTotalBallspeed(4);
         setUserPaddleSpeed(3);
         setPcPaddleSpeed(4);
@@ -333,6 +367,7 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     }
 
     public void meVsSkynet() {
+         defaultValue();
         setTotalBallspeed(5);
         setDynamicBallSpeed(true);
         setBetterAi(true);
@@ -345,6 +380,7 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     }
 
     public void deathwish() {
+         defaultValue();
         setTotalBallspeed(15);
         setDynamicBallSpeed(true);
         setBetterAi(true);
@@ -355,6 +391,7 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     }
 
     public void jail() {
+         defaultValue();
         setTotalBallspeed(5);
         setDynamicBallSpeed(false);
         setBetterAi(false);
@@ -367,10 +404,12 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     }
 
     public void multiCasual() {
+         defaultValue();
         setMultiplayer(true);
     }
 
     public void multiIntimidating() {
+         defaultValue();
         setMultiplayer(true);
         setTotalBallspeed(5);
         setUserPaddleSpeed(4);
@@ -378,6 +417,7 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     }
 
     public void pingPongDiplomacy() {
+         defaultValue();
         setMultiplayer(true);
         setTotalBallspeed(5);
         setUserPaddleSpeed(6);
@@ -385,6 +425,7 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     }
 
     public void DPRKAthelete() {
+         defaultValue();
         setMultiplayer(true);
         setTotalBallspeed(15);
         setUserPaddleSpeed(8);
@@ -392,6 +433,7 @@ class GameMode extends JPanel implements MouseMotionListener, KeyListener {
     }
 
     public void userChinaWall() {
+         defaultValue();
         setIntUserLoc(0);
         setUserPaddleHeight(1000);
     }
